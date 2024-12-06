@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "zh-ch",
+    "description": "convert between zh and ch",
+    "version": "1.0",
+    "permissions": [
+        "scripting", 
+        "activeTab",
+        "contextMenus",
+        "clipboardRead",
+        "activeTab",
+        "clipboardWrite"
+
+    ],
+    "background": {
+        "service_worker": "script/background.js"
+    },
+    "content_scripts": [ 
+    {
+       "matches": [
+            "<all_urls>"
+       ],
+       "js": ["script/opencc_js_full.js","script/content.js"]
+    }
+ ]
+}
+
