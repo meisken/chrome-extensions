@@ -12,6 +12,7 @@ chrome.runtime.onMessage.addListener(
             console.log(result)
        
             navigator.clipboard.writeText(result);
+            alert(`copied ${result} to your clipboard`)
         }
 
   
