@@ -1,0 +1,50 @@
+
+html, body{
+    all: unset;
+
+
+}
+*{
+
+    box-sizing: border-box;
+        
+    font-family: "Roboto", serif;
+    font-weight: 400;
+}
+
+:root{
+    --background: #000000;
+    --Surface: #1C1C1E;
+
+    --text: #ffffff;
+    --secondary-text: #98989F;
+
+    --toggle: #34C759;
+    --disabled-toggle: #39393D
+
+    --icon-background-blue: #007AFF;
+    --icon-background-green: #34C759;
+
+    --border: #3D3D41;
+}
+.lightmode{
+    --background: #F2F2F7;
+    --Surface: #FFFFFF;
+
+    --text: #000000;
+    --secondary-text: #8A8A8E;
+
+    --toggle: #34C759;
+    --disabled-toggle:#E9E9EA
+
+    --icon-background-blue: #007AFF;
+    --icon-background-green: #34C759;
+
+    --border: #B9B9BB;
+}
+.container{
+    width: 200px;
+    height: 200px;
+    background-color: lightblue;
+    color: black;
+}

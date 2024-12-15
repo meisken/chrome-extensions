@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "zh-ch",
     "description": "convert between zh and ch",
-    "version": "2",
+    "version": "2.1",
     "permissions": [
         "scripting", 
         "activeTab",
@@ -12,6 +12,9 @@
         "clipboardWrite"
 
     ],
+    "action": {
+        "default_popup": "ui/popup.html"
+    },
     "background": {
         "service_worker": "script/background.js"
     },
