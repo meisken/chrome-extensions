@@ -23,14 +23,30 @@ html, body{
     --disabled-toggle: #39393D
 
     --icon-background-blue: #007AFF;
-    --icon-background-green: #34C759;
+    --icon-background-green: #33C458;
 
     --border: #3D3D41;
+
+    
+    --body-padding-x: 0 16px 0 16px;
+    --body-padding-x-thin: 0 9px 0 9px;
+
+    --body-padding-y: 7px 0 7px 0;
+    --body-padding-y-large: 9px 0 9px 0;
+    --body-padding-y-extra-large: 16px 0 16px 0;
+
+    --arrow-margin-left: 0 0 0 12px;
+    --box-margin-right: 0 16px 0 0;
+    --box-margin-small: 0 12px 0 0;
+    --box-margin-thin: 0 8px 0 0;
+
+    --subheadline-margin-bottom: 0 0 18px 0;
+    --section-margin-bottom: 0 0 40px 0;
 }
 .lightmode{
     --background: #F2F2F7;
     --Surface: #FFFFFF;
-
+ 
     --text: #000000;
     --secondary-text: #8A8A8E;
 
@@ -38,7 +54,7 @@ html, body{
     --disabled-toggle:#E9E9EA
 
     --icon-background-blue: #007AFF;
-    --icon-background-green: #34C759;
+    --icon-background-green: #33C458;
 
     --border: #B9B9BB;
 }
