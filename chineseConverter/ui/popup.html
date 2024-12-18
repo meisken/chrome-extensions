@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,136 @@
     <link href="./style/main.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        testing
+    <div class="app">
+
+
+        <div class="main-container">
+            <header>
+                <h1>中文轉換器</h1>
+                <img src="images/chinese_converter_logo_svg.svg" />
+            </header>
+            <main>
+
+                <section class="setting-section">
+                    <div class="search-bar">
+                        <div>
+                            <img src="images/icons/magnifying-glass.svg" alt="">
+                        </div>
+                        <input type="text" placeholder="繁轉簡">
+                        <div>
+                            <img src="images/icons/cross.svg" alt="">
+                        </div>
+                    </div>
+        
+                    <div class="output-box">
+                        <p>This is a testing page</p>
+                        <div>
+                            <span>Copied</span>
+                            <img src="images/icons/clipboard-document.svg" />
+                        </div>
+                    </div>
+                </section>
+
+                <section class="setting-section">
+                    <div class="convert-mode setting-row">
+                        <div>
+                            <img src="images/icons/center_character.svg" />
+                        </div>
+                        <div>
+                            <span>轉換模式</span>
+                        </div>
+                        <div>
+                            <span>繁轉簡</span>
+                            <img src="images/icons/chevron.right.svg" />
+                        </div>
+                    </div>
+
+                    <div class="right-click-menu setting-row">
+                        <div>
+                            <img src="images/icons/cursor-arrow-rays.svg" />
+                        </div>
+                        <div>
+                            <span>右鍵選單</span>
+                        </div>
+                        <div>
+                            <span>所有</span>
+                            <img src="images/icons/chevron.right.svg" />
+                        </div>
+                    </div>
+
+                </section>
+
+
+                <section class="setting-section">
+
+                    <div class="light-dark-mode setting-row">
+                        <div>
+                            <img src="images/icons/sun.svg" />
+                        </div>
+                        <div>
+                            <span>Light/Dark mode</span>
+                        </div>
+                        <div>
+                            <label for="toggle" class="ios-toggle">
+                                <input type="checkbox" id="toggle">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="convert-reminder setting-row">
+                        <div>
+                            <img src="images/icons/bell.fill.svg" />
+                        </div>
+                        <div>
+                            <span>轉換提示</span>
+                        </div>
+                        <div>
+                            <label for="toggle" class="ios-toggle">
+                                <input type="checkbox" id="toggle">
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="help setting-row">
+                        <div>
+                            <img src="images/icons/github.svg" />
+                        </div>
+                        <div>
+                            <span>Help | Change Log</span>
+                        </div>
+                        <div>
+                            <span>Github</span>
+                            <img src="images/icons/chevron.right.svg" />
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <div class="detail-setting-container">
+            <div class="page-convert-mode">
+
+                <div class="section-subheading">轉換模式</div>
+                <section class="setting-section">
+
+                </section>
+
+                <div class="section-subheading">右鍵設定</div>
+                <section class="setting-section">
+
+                </section>
+
+                <div class="section-subheading">選單設定</div>
+                <section class="setting-section">
+
+                </section>
+
+            </div>
+            
+        </div>
     </div>
 </body>
 </html>
