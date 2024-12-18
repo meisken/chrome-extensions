@@ -13,20 +13,6 @@ html, body{
 }
 
 :root{
-    --background: #000000;
-    --Surface: #1C1C1E;
-
-    --text: #ffffff;
-    --secondary-text: #98989F;
-
-    --toggle: #34C759;
-    --disabled-toggle: #39393D
-
-    --icon-background-blue: #007AFF;
-    --icon-background-green: #33C458;
-
-    --border: #3D3D41;
-
     
     --body-padding-x: 0 16px 0 16px;
     --body-padding-x-thin: 0 9px 0 9px;
@@ -43,7 +29,24 @@ html, body{
     --subheadline-margin-bottom: 0 0 18px 0;
     --section-margin-bottom: 0 0 40px 0;
 }
-.lightmode{
+body{
+    --background: #000000;
+    --Surface: #1C1C1E;
+
+    --text: #ffffff;
+    --secondary-text: #98989F;
+
+    --toggle: #34C759;
+    --disabled-toggle: #39393D
+
+    --icon-background-blue: #007AFF;
+    --icon-background-green: #33C458;
+    --icon-background-purple: #5856D6;
+    --icon-background-gray: #8E8E93;
+
+    --border: #3D3D41;
+}
+body.lightmode{
     --background: #F2F2F7;
     --Surface: #FFFFFF;
  
@@ -55,12 +58,14 @@ html, body{
 
     --icon-background-blue: #007AFF;
     --icon-background-green: #33C458;
+    --icon-background-purple: #5856D6;
+    --icon-background-gray: #8E8E93;
 
     --border: #B9B9BB;
 }
 .container{
-    width: 200px;
-    height: 200px;
-    background-color: lightblue;
-    color: black;
+    width: 380px;
+    height: 720px;
+    background-color: black;
+    color: var(--text);
 }
