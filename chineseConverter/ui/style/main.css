@@ -1,5 +1,5 @@
 
-html, body{
+html, body, h1, h2, h3, h4, h5, h6, p{
     all: unset;
 
 
@@ -37,7 +37,7 @@ body{
     --secondary-text: #98989F;
 
     --toggle: #34C759;
-    --disabled-toggle: #39393D
+    --disabled-toggle: #39393D;
 
     --icon-background-blue: #007AFF;
     --icon-background-green: #33C458;
@@ -54,7 +54,7 @@ body.lightmode{
     --secondary-text: #8A8A8E;
 
     --toggle: #34C759;
-    --disabled-toggle:#E9E9EA
+    --disabled-toggle: #E9E9EA;
 
     --icon-background-blue: #007AFF;
     --icon-background-green: #33C458;
@@ -63,9 +63,67 @@ body.lightmode{
 
     --border: #B9B9BB;
 }
-.container{
+.main-container{
     width: 380px;
     height: 720px;
     background-color: black;
     color: var(--text);
 }
+
+.ios-toggle{
+    cursor: pointer;
+}
+.ios-toggle > input{
+    display: none;
+}
+.ios-toggle span{
+    --toggle-height: 31px;
+    display: inline-block;
+    width: 51px;
+    height: var(--toggle-height);
+    background-color: var(--disabled-toggle);
+    border-radius: calc(var(--toggle-height) / 2);
+    position: relative;
+    transition: all 0.3s ease-in-out;
+
+}
+
+.ios-toggle span::after{
+    --toggle-circle-diameter: 27px;
+    --toggle-circle-wider-width: 35px;
+    content: '';
+    display: inline-block;
+    width: var(--toggle-circle-diameter);
+    height: var(--toggle-circle-diameter);
+    background-color: white;
+    border-radius: calc(var(--toggle-circle-diameter) / 2);
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 3px 1px rgba(0, 0, 0, 0.06);
+
+    transition: all 0.3s ease-in-out;
+    left: 2px;
+}
+.ios-toggle:has(> input:checked) > span{
+
+    background-color: var(--toggle);
+}
+.ios-toggle:has(> input:checked) > span::after{
+    left: calc(100% - var(--toggle-circle-diameter) - 2px);
+    box-shadow: 0 -3px -8px rgba(0, 0, 0, 0.15), 0 -3px -1px rgba(0, 0, 0, 0.06);
+ 
+}
+.ios-toggle:has(> input:active) > span::after{
+    
+    width: var(--toggle-circle-wider-width);
+
+}
+.ios-toggle:has(> input:checked:active) > span::after{
+
+    left: calc(100% - var(--toggle-circle-diameter) - 2px - 8px);
+}
+
+
+
+
