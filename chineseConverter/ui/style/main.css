@@ -24,7 +24,7 @@ html, body, h1, h2, h3, h4, h5, h6, p{
     --subheadline-margin-bottom: 18px;
     --section-margin-top: 36px;
 
-    --chinese-font: "Noto Sans HK", serif;
+    --chinese-font: "Noto Sans TC", serif;
     --english-font: "Roboto", serif;
 
     --regular-border-radius: 10.5px;
@@ -129,7 +129,7 @@ body.lightmode{
     font-family: var(--chinese-font);
     font-size: 17px;
     line-height: 22px;
-    letter-spacing: 0.75px;
+    letter-spacing: 0.5px;
     font-weight: 400;
     color: var(--text);
 }
