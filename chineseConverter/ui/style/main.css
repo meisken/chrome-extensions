@@ -5,7 +5,6 @@ html, body, h1, h2, h3, h4, h5, h6, p, section, main{
 
 }
 
-
 :root{
     --container-padding-y: 28px;
     --container-padding-x: 16px;
@@ -29,7 +28,24 @@ html, body, h1, h2, h3, h4, h5, h6, p, section, main{
     --english-font: "Roboto", serif;
 
     --regular-border-radius: 10.5px;
+
+    --scroll-bar-size: 4px;
 }
+
+*::-webkit-scrollbar-thumb{
+    background: var(--secondary-text);
+    border-radius: 2px;
+}
+
+*::-webkit-scrollbar-track {
+    background:  transparent;
+}
+*::-webkit-scrollbar {
+
+    max-width: var(--scroll-bar-size);
+    
+}
+
 *{
 
   
@@ -128,7 +144,7 @@ body.lightmode{
 }
 .radical-regular-dark-font{
     color: var(--secondary-text);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1;
 }
 .headline-font{
@@ -254,10 +270,10 @@ body.lightmode{
 
 
 .output-box{
-
+    scrollbar-gutter: stable;
     height: 238px;
     position: relative;
-    padding: var(--body-padding-y-large) var(--body-padding-x-thin);
+    padding: var(--body-padding-y-large)  var(--body-padding-x-thin);
 }
 .output-box  p{
 
@@ -269,18 +285,7 @@ body.lightmode{
     position: relative;
     padding-bottom: 40px;
 }
-.output-box  p::-webkit-scrollbar-thumb{
-    background: var(--secondary-text);
-}
 
-.output-box  p::-webkit-scrollbar-track {
-    background:  transparent;
-}
-.output-box  p::-webkit-scrollbar {
-
-    max-width: 4px;
-    
-}
 .output-box  .copy-button{
  
     gap: var(--box-margin-right-thin);
@@ -329,25 +334,33 @@ body.lightmode{
     opacity: 1;
     clip-path: inset(0 0% 0 0%);
 }
-.text-output-mode{
-    display: none;
+.output-box .text-output-mode{
+ 
+
 }
 .quick-output-mode{
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, 48px);
-    grid-auto-rows: 62px;
+    display: none;
+    grid-template-columns: repeat(auto-fill, 52px);
+    grid-auto-rows: 68px;
 
-    gap:12px 8px;
+    gap: 10px 11px;
+    height: 220px;
+
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+
 }
 .quick-output-mode > .character{
+  
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
     background-color: var(--disabled-toggle);
-    border-radius: var(--regular-border-radius);
+    border-radius: calc(var(--regular-border-radius) * 1.084);
 }
 
 
