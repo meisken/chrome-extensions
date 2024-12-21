@@ -410,7 +410,8 @@ body.lightmode{
     align-items: center;
     position: relative;
 }
-.setting-section .setting-row:not(:first-child)::after{
+.setting-section .setting-row:not(:first-child)::after,
+.setting-section label:not(:first-child) .setting-row::after{
     content: '';
     position: absolute;
     right: 0;
@@ -418,8 +419,9 @@ body.lightmode{
     background-color: var(--border);
     height: 0.5px;
     width: calc(100% - 30px - 16px - 16px + 2px);
-    opacity: 0.7;
+
 }
+
 .setting-section .setting-row .icon{
     width: 100%;
     height: 100%;
@@ -544,6 +546,7 @@ body.lightmode{
 
 .detail-setting-container .setting-section{
     margin-top: var(--body-padding-y-extra-large);
+    display: block;;
 }
 
 
@@ -554,13 +557,14 @@ body.lightmode{
     gap: var(--body-padding-x-thin);
     cursor: pointer;
 }
-.detail-setting-container .setting-section .setting-row:not(:first-child)::after{
+.detail-setting-container .setting-section label:not(:first-child) .setting-row::after{
 
     width: calc(100% - 24px - 9px - 9px + 2px);
 
 }
-.detail-setting-container .setting-section .setting-row:not(:first-child) .icon img{
-    display: none;
+.detail-setting-container .setting-section .setting-row .icon img{
+    opacity: 0;
+
 }
 .detail-setting-container .setting-section .setting-row span{
     transform: translateX(4px);
@@ -568,4 +572,10 @@ body.lightmode{
 .section-subheading{
     margin-top: var(--section-margin-top);
     margin-left: var( --arrow-margin-left);
+}
+.detail-setting-container .setting-section input[type="checkbox"]{
+    display: none;
+}
+.detail-setting-container .setting-section .setting-row:has(> input[type="checkbox"]:checked) .icon img{
+    opacity: 1;
 }
