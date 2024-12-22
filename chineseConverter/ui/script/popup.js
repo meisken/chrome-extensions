@@ -47,6 +47,8 @@ const registerCheckboxesListener = () => {
                 checkboxes.forEach((checkbox) => {
                     if(id !== checkbox.id){
                         checkbox.checked = false;
+                    }else{
+                        checkbox.checked = true;
                     }
                 })
             }
