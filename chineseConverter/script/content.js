@@ -2,6 +2,7 @@ const contextMenuIds = {
     zhToCn: "zh-cn",
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
+    zhToQuick: "zh-quick"
 }
 
 const openCCmode = {
