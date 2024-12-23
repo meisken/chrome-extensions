@@ -9,7 +9,8 @@
         "contextMenus",
         "clipboardRead",
         "activeTab",
-        "clipboardWrite"
+        "clipboardWrite",
+        "storage"
 
     ],
     "action": {
