@@ -261,7 +261,7 @@
                     </section>
 
                     <div class="section-subheading section-subheading-font">右鍵選單設定</div>
-                    <section class="setting-section right-click-menu-items">
+                    <section class="setting-section context-menu">
 
                         <label for="context-zh-cn">
                             <div class="setting-row">
@@ -306,18 +306,29 @@
 
                     <div class="section-subheading section-subheading-font">右鍵行動設定</div>
                     <section class="setting-section right-click-behavior">
-                        <div class="setting-row">
-                            <div class="icon">
-                                <img src="images/icons/check.svg" />
+
+                        <label for="right-click-behavior-copy-to-clipboard">
+                            <div class="setting-row">
+                                <div class="icon">
+                                    <img src="images/icons/check.svg" />
+                                </div>
+                                <span class="body-regular-font">右鍵複製</span>
+                                <input type="checkbox" id="right-click-behavior-copy-to-clipboard">
+
                             </div>
-                            <span class="body-regular-font">右鍵複製</span>
-                        </div>
-                        <div class="setting-row">
-                            <div class="icon">
-                                <img src="images/icons/check.svg" />
+                        </label>
+
+                        <label for="right-click-behavior-output-in-popup">
+                            <div class="setting-row">
+                                <div class="icon">
+                                    <img src="images/icons/check.svg" />
+                                </div>
+                                <span class="body-regular-font">在跳出視窗顯示</span>
+                                <input type="checkbox" id="right-click-behavior-output-in-popup">
+
                             </div>
-                            <span class="body-regular-font">在跳出視窗顯示</span>
-                        </div>
+                        </label>
+
                     </section>
 
                 </div>

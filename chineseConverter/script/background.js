@@ -2,13 +2,50 @@ const contextMenuIds = {
     zhToCn: "zh-cn",
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
+    zhToQuick: "zh-quick"
 }
-const contextMenuNames = {
-    [contextMenuIds.zhToCn] : "繁轉簡",
-    [contextMenuIds.cnToZh] : "簡轉繁",
-    [contextMenuIds.quickToZh] : "速成碼轉繁",
+//may make customizable context menu name
+const settings = {
+    convertMode: {
+        current: contextMenuIds["zhToCn"]
+    },
+    rightClickBehavior: {
+        "copy-to-clipboard": true,
+        "output-in-popup": false
+    },
+    contextMenu: {
+        [contextMenuIds.zhToCn]: true,
+        [contextMenuIds.cnToZh]: true,
+        [contextMenuIds.quickToZh]: true,
+        [contextMenuIds.zhToQuick]: true,
+    },
+    contextMenuName: {
+        [contextMenuIds.zhToCn]: "繁轉簡",
+        [contextMenuIds.cnToZh]: "簡轉繁",
+        [contextMenuIds.quickToZh]: "速成碼轉繁",
+        [contextMenuIds.zhToQuick]: "繁轉速成碼",
+    },
 }
 
+const requestTypes = {
+    "request-stored-settings": (props) => {
+        return settings
+    },
+    "background-console-log": (props) => {
+        console.log(props)
+    },
+    "update-settings": ({key, newState}) => {
+        console.log(key, newState)
+        if(key !== undefined && newState !== undefined){
+            UpdateSettings(key, newState)
+        }else{
+            console.log(`update-settings: key or newState is undefined`)
+        }
+
+  
+    }
+};
+const storedSettingsName = "userSettings";
 const sendDataToContent = (data) => {
 
     const mode =  data.menuItemId;
@@ -37,22 +74,107 @@ const sendDataToContent = (data) => {
     })
      
 };
+const registerContextMenus = () => {
 
-chrome.contextMenus.removeAll(function() {
-    Object.keys(contextMenuIds).forEach((key) => {
-        console.log(key)
-        chrome.contextMenus.create({
-            id: contextMenuIds[key],
-            title: contextMenuNames[contextMenuIds[key]],
-            contexts:["selection"], 
-        }); 
+    chrome.contextMenus.removeAll(function() {
+        Object.keys(contextMenuIds).forEach((key) => {
+    
+            if(settings.contextMenu[contextMenuIds[key]]){           
+                console.log(settings.contextMenuName[contextMenuIds[key]])   
+                chrome.contextMenus.create({
+                    id: contextMenuIds[key],
+                    title: settings.contextMenuName[contextMenuIds[key]],
+                    contexts:["selection"], 
+                }); 
+            }
+     
+        })
+    });
+
+}
+
+
+
+
+const setData = (obj) => {
+    return new Promise((resolve) => {
+        chrome.storage.local.set(obj, resolve);
     })
-})
+    
+}
+const getData = (string) => {
+    return new Promise((resolve) => {
+        chrome.storage.local.get(string, resolve);
+    })
+}
+const getSettings = () => {
+    return getData(storedSettingsName)
+}
+const storeSettings = () => {
+    return setData({
+        [storedSettingsName]: settings 
+    });
+}
+const onReceiveMessage = (request, sender, sendResponse) => {
 
-chrome.contextMenus.onClicked.addListener(sendDataToContent);
+    if(requestTypes[request.requestType]){
+        
+        sendResponse(requestTypes[request.requestType](request.props));
+    }
+
+};
+async function UpdateSettings(key, newState) {
+    for(const newStateKey in  newState){
+        if(settings[key][newStateKey] === undefined){
+            console.log(`settings update failed: ${key}.${newStateKey} is undefined`)
+            return
+        }   
+    }
+    settings[key] = {
+        ...settings[key],
+        ...newState
+    }
+    console.log("updated settings",settings)
+    await storeSettings()
+    console.log("stored settings",settings)
+}
+const initFetchForSettings = async () => {
+
+    return new Promise(async (resolve) => {
+     
+        const storedSettings = await getSettings();
+        console.log(storedSettings);
+        if(storedSettings[storedSettingsName] === undefined){
+            await storeSettings();
+            console.log("settings initialized");
+        }else{
+            settings.contextMenu = {
+                ...settings.contextMenu,
+                ...storedSettings[storedSettingsName].contextMenu
+            };
+            settings.convertMode = storedSettings[storedSettingsName].convertMode;
+            settings.rightClickBehavior = {
+                ...settings.rightClickBehavior,
+                ...storedSettings[storedSettingsName].rightClickBehavior
+            }
+        }
+        
+        resolve();
+    })
+ 
 
 
+}
 
+const main = async () => {
+    await initFetchForSettings();
+    registerContextMenus();
+    chrome.contextMenus.onClicked.addListener(sendDataToContent);
+    chrome.runtime.onMessage.addListener(onReceiveMessage);
+
+
+}
+main();
 let qdict = [
     ["日", ["a", 1]],
     ["曰", ["a", 2]],
