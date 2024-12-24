@@ -17,19 +17,21 @@ const convertType = {
     [contextMenuIds.zhToCn]: (selectedText, processedResult) => {
 
         const converter = OpenCC.Converter({ from: 'hk', to: 'cn' });
-        return converter(request.selectedText);
+        const result = converter(selectedText);
+        return result;
         
 
     },
     [contextMenuIds.cnToZh]: (selectedText, processedResult) => {
 
         const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
-        return converter(request.selectedText);
+        const result = converter(selectedText);
+        return result;
 
 
     },
     [contextMenuIds.quickToZh]: (selectedText, processedResult) => {
-        return request.processedResult 
+        return processedResult
       
     },
     [contextMenuIds.zhToQuick]: (selectedText, processedResult) => {
@@ -64,9 +66,11 @@ chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         let result;
 
-        const mode = request.mode;
-        const selectedText = request.selectedText;
-        const processedResult  = request.processedResult;
+        const {
+            mode, 
+            selectedText,  
+            processedResult
+         } = request;
 
         if(convertType[mode]){
             result = convertType[mode](selectedText, processedResult)
@@ -77,7 +81,7 @@ chrome.runtime.onMessage.addListener(
  
         //alert(`copied ${result} to your clipboard`)
   
-        sendResponse()
+        sendResponse(result)
             
     }
 );
