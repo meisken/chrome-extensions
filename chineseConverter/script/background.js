@@ -153,9 +153,10 @@ async function UpdateSettings(key, newState) {
         ...settings[key],
         ...newState
     }
-    console.log("updated settings",settings)
-    await storeSettings()
-    console.log("stored settings",settings)
+    console.log("updated settings",settings);
+    await storeSettings();
+    console.log("stored settings",settings);
+    registerContextMenus();
 }
 const initFetchForSettings = async () => {
 
