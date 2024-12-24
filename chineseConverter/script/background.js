@@ -2,7 +2,8 @@ const contextMenuIds = {
     zhToCn: "zh-cn",
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
-    zhToQuick: "zh-quick"
+    zhToQuick: "zh-quick",
+    textToImage: "text-image"
 }
 //may make customizable context menu name
 const settings = {
@@ -18,12 +19,14 @@ const settings = {
         [contextMenuIds.cnToZh]: true,
         [contextMenuIds.quickToZh]: true,
         [contextMenuIds.zhToQuick]: true,
+        [contextMenuIds.textToImage]: true,
     },
     contextMenuName: {
         [contextMenuIds.zhToCn]: "繁轉簡",
         [contextMenuIds.cnToZh]: "簡轉繁",
         [contextMenuIds.quickToZh]: "速成碼轉繁",
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
+        [contextMenuIds.textToImage]: "文字轉圖片",
     },
 }
 

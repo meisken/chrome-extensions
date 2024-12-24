@@ -2,7 +2,8 @@ const contextMenuIds = {
     zhToCn: "zh-cn",
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
-    zhToQuick: "zh-quick"
+    zhToQuick: "zh-quick",
+    textToImage: "text-image"
 }
 
 
@@ -53,7 +54,11 @@ const convertType = {
             return result
         }
          
-    }
+    },
+    [contextMenuIds.textToImage]: (selectedText, processedResult) => {
+        return undefined
+      
+    },
 }
 chrome.runtime.onMessage.addListener( 
     function(request, sender, sendResponse) {
