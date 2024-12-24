@@ -46,31 +46,50 @@ const requestTypes = {
     }
 };
 const storedSettingsName = "userSettings";
-const sendDataToContent = (data) => {
-
-    const mode =  data.menuItemId;
-    const selectedText = data.selectionText;
-    let processedResult;
-
-    if(mode === contextMenuIds.quickToZh){
-        processedResult = quickConvertToZh(selectedText);
-
+const rightClickActions = {
+    // [contextMenuIds.zhToCn]: () => {
+        //process on content.js
+    // },
+    // [contextMenuIds.cnToZh]: () => {
+        //process on content.js
+    // },
+    [contextMenuIds.zhToQuick]: (_, selectedText) => {
+        return zhConvertToQuick(selectedText);
+    },
+    [contextMenuIds.quickToZh]: (_,selectedText) => {
+        return quickConvertToZh(selectedText);
     }
-
+}
+const sendData = (props, callback) => {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       
         if(tabs[0]){
             chrome.tabs.sendMessage(
                 tabs[0].id, 
-                {
-                    mode,
-                    selectedText,
-                    processedResult
-                }, 
-                function(response) {}
+                props, 
+                callback
             )
         }
 
+    })
+
+}
+const  rightClickMenuOnClickHandler = (data) => {
+
+    const mode =  data.menuItemId;
+    const selectedText = data.selectionText;
+    let processedResult;
+
+
+    if(rightClickActions[mode]){
+        processedResult = rightClickActions[mode](mode,selectedText)
+
+    }
+
+    sendData({
+        mode,
+        selectedText,
+        processedResult
     })
      
 };
@@ -115,7 +134,7 @@ const storeSettings = () => {
         [storedSettingsName]: settings 
     });
 }
-const onReceiveMessage = (request, sender, sendResponse) => {
+const onReceiveMessageHandler = (request, sender, sendResponse) => {
 
     if(requestTypes[request.requestType]){
         
@@ -169,8 +188,8 @@ const initFetchForSettings = async () => {
 const main = async () => {
     await initFetchForSettings();
     registerContextMenus();
-    chrome.contextMenus.onClicked.addListener(sendDataToContent);
-    chrome.runtime.onMessage.addListener(onReceiveMessage);
+    chrome.contextMenus.onClicked.addListener(rightClickMenuOnClickHandler);
+    chrome.runtime.onMessage.addListener(onReceiveMessageHandler);
 
 
 }
@@ -21189,17 +21208,84 @@ let qdict = [
     ["—", ["zy", 1]],
     ["′", ["zy", 2]],
     ["〈", ["zy", 3]]
-];
+]; //github SuchengCheck/qdict_mini.js
 
+const keyList = {
+    "q": "手",
+    "w": "田",
+    "e": "水",
+    "r": "口",
+    "t": "廿",
+    "y": "卜",
+    "u": "山",
+    "i": "戈",
+    "o": "人",
+    "p": "心",
+    "a": "日",
+    "s": "尸",
+    "d": "木",
+    "f": "火",
+    "g": "土",
+    "h": "竹",
+    "j": "十",
+    "k": "大",
+    "l": "中",
+    "z": "Z",
+    "x": "難",
+    "c": "金",
+    "v": "女",
+    "b": "月",
+    "n": "弓",
+    "m": "一",
+}
+function dictQuery(character) {
+    const query = qdict.find((char) => char[0] === character);
+    if(query !== undefined){
+        const keys = query[1][0].split("");
+        const radicals = keys.map(radical => keyList[radical]);
+        const number = query[1][1];
+        return {
+
+            character,
+            keys,
+            radicals,
+            number
+        }
+    }else{
+        console.info(`no character match: ${character}`);
+        return undefined
+    }
+}
+const isChineseCharacter = (char) => {
+    const code = char.charCodeAt(0);
+    return code >= 0x4E00 && code <= 0x9FFF;
+}
+
+function zhConvertToQuick(string){
+    const characters = string.split("");
+    const result = [];
+    characters.forEach((char) => {
+        if(isChineseCharacter(char)){
+            const query = dictQuery(char);
+            if(query !== undefined){
+                result.push(query)
+            }
+       
+        }else{
+            result.push(char)
+        }
+    });
+    return result
+}
 function quickConvertToZh(string){
     
     const quickFormatRegex = /([a-z][a-z]\s*[1-9])/;
     const separateEachWords = (text) => {
       
-        return text.split(quickFormatRegex).filter(Boolean)
+        return text.split(quickFormatRegex).filter(Boolean);
     };
     const isMatchTheQuickFormat = (text) => {
-        return text.match(quickFormatRegex)
+        return text.match(quickFormatRegex);
     }
 
     const separatedWordsArray = separateEachWords(string);
@@ -21214,7 +21300,7 @@ function quickConvertToZh(string){
       
             let radicals = value.match(/[a-z][a-z]/);
             if(radicals  === null){
-                console.error("no radicals match");
+                console.info(`${radicals}: no radicals match`);
                 return value
             }
             const characterId = parseInt(value.match(/[1-9]/)) + (spacesLength * 9);
