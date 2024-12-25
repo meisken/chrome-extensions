@@ -333,6 +333,18 @@ const registerCrossButtonListener = () => {
         clearOutput();
     });
 }
+const registerReminderToggleListener = () => {
+    const reminderToggle = document.querySelector(`#convert-toggle input[type="checkbox"]`);
+    if(reminderToggle){
+        reminderToggle.addEventListener("change",async () => {
+  
+            await updateSettings("reminder",{
+                enabled: reminderToggle.checked
+            });
+            await requestStoredSettings()
+        })
+    }
+}
 async function backgroundConsoleLog(...args){
     return sendMessageToBackground("background-console-log",[...args]);
 }
@@ -401,9 +413,10 @@ const initializeSettings =  () => {
                 convertMode, 
                 contextMenu,
                 contextMenuName,
-                rightClickBehavior
+                rightClickBehavior,
+                reminder
             } = userSettings;
-         
+
             if(convertMode !== undefined){
 
                 
@@ -411,12 +424,12 @@ const initializeSettings =  () => {
                 if(checkbox){
                     checkbox.checked = true;
                 }else{
-                    reject("convertMode checkbox does not exist")
+                    reject("convertMode checkbox does not exist");
                 }
 
                 updateCovertModeInDom(convertMode.current, contextMenuName[convertMode.current]);
             }else{
-                reject("convertMode is undefined")
+                reject("convertMode is undefined");
             }
             
             if(contextMenu !== undefined){
@@ -426,12 +439,12 @@ const initializeSettings =  () => {
                         if(checkbox){
                             checkbox.checked = true
                         }else{
-                            reject("contextMenu checkbox does not exist")
+                            reject("contextMenu checkbox does not exist");
                         }
                     }
                 })
             }else{
-                reject("contextMenu is undefined")
+                reject("contextMenu is undefined");
             }
 
             if(rightClickBehavior !== undefined){
@@ -447,9 +460,16 @@ const initializeSettings =  () => {
                     }
                 })
             }else{
-                reject("rightClickBehavior is undefined")
+                reject("rightClickBehavior is undefined");
             }
-
+            if(reminder !== undefined){
+                const reminderToggle = document.querySelector(`#convert-toggle input[type="checkbox"]`);
+                if(reminderToggle){
+                    reminderToggle.checked = reminder.enabled;
+                }else{
+                    reject("reminderToggle does not exist");
+                }
+            }
             resolve();
         }catch(err){
             reject(err)
@@ -501,6 +521,7 @@ const main = async () => {
     registerSearchInputOnChangeListener();
     registerCopyButtonOnClickListener();
     registerCrossButtonListener();
+    registerReminderToggleListener();
 }
 
 

@@ -63,7 +63,7 @@ const convertType = {
     },
 }
 chrome.runtime.onMessage.addListener( 
-    function(request, sender, sendResponse) {
+     function(request, sender, sendResponse) {
         let result;
 
         const {
@@ -79,8 +79,12 @@ chrome.runtime.onMessage.addListener(
         if(result && !noCopy){
             copyToClipboard(result);
         }
- 
-        //alert(`copied ${result} to your clipboard`)
+        requestStoredSettings().then((settings) => {
+            if(settings?.reminder?.enabled){
+                alert(`已複製到剪貼簿 (你可以在跳出視窗關閉這功能 點一下右上角icon打開跳出視窗)`)
+            }
+        })
+
   
         sendResponse(result)
             
@@ -99,6 +103,16 @@ const sendMessageToBackground = (requestType, props ) => {
     })
 
  
+}
+const requestStoredSettings = () => {
+    return new Promise(async (resolve, reject) => {
+        try{
+            const userSettings = await sendMessageToBackground("request-stored-settings");
+            resolve(userSettings);
+        }catch(err){
+            reject("requestStoredSettings",err)
+        }
+    })
 }
 async function backgroundConsoleLog(...args){
     return sendMessageToBackground("background-console-log",[...args]);

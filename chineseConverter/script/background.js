@@ -28,6 +28,9 @@ const settings = {
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
         [contextMenuIds.textToImage]: "文字轉圖片",
     },
+    reminder: {
+        enabled: true
+    }, 
 }
 const storedSettingsName = "userSettings";
 const rightClickActions = {
