@@ -29,12 +29,26 @@ const settings = {
         [contextMenuIds.textToImage]: "文字轉圖片",
     },
 }
-
+const storedSettingsName = "userSettings";
+const rightClickActions = {
+    [contextMenuIds.zhToCn]: () => {
+        //process on content.js
+    },
+    [contextMenuIds.cnToZh]: () => {
+        //process on content.js
+    },
+    [contextMenuIds.zhToQuick]: (_, selectedText) => {
+        return zhConvertToQuick(selectedText);
+    },
+    [contextMenuIds.quickToZh]: (_,selectedText) => {
+        return quickConvertToZh(selectedText);
+    }
+}
 const requestTypes = {
     "request-stored-settings": (props) => {
         return settings
     },
-    "background-console-log": (props) => {
+    "background-console-log": (args) => {
         console.log(props)
     },
     "update-settings": ({key, newState}) => {
@@ -46,23 +60,12 @@ const requestTypes = {
         }
 
   
-    }
-};
-const storedSettingsName = "userSettings";
-const rightClickActions = {
-    // [contextMenuIds.zhToCn]: () => {
-        //process on content.js
-    // },
-    // [contextMenuIds.cnToZh]: () => {
-        //process on content.js
-    // },
-    [contextMenuIds.zhToQuick]: (_, selectedText) => {
-        return zhConvertToQuick(selectedText);
     },
-    [contextMenuIds.quickToZh]: (_,selectedText) => {
-        return quickConvertToZh(selectedText);
-    }
-}
+    "request-quick-conversion": ({text, mode}) => {
+        const result = rightClickActions[mode](mode,text)
+        return result
+    },
+};
 const sendData = (props, callback) => {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       
@@ -102,7 +105,6 @@ const registerContextMenus = () => {
         Object.keys(contextMenuIds).forEach((key) => {
     
             if(settings.contextMenu[contextMenuIds[key]]){           
-                console.log(settings.contextMenuName[contextMenuIds[key]])   
                 chrome.contextMenus.create({
                     id: contextMenuIds[key],
                     title: settings.contextMenuName[contextMenuIds[key]],

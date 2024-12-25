@@ -46,7 +46,7 @@ html, body, h1, h2, h3, h4, h5, h6, p{
     
 }
 
-*{
+*, *::after, *::before{
 
   
     text-rendering: optimizeLegibility !important;
@@ -307,7 +307,7 @@ body.lightmode{
     position: relative;
     padding: var(--body-padding-y-large)  var(--body-padding-x-thin);
 }
-.output-box  p{
+.output-box .text-output-mode p{
 
     display: block;
     width: 100%;
@@ -317,7 +317,13 @@ body.lightmode{
     position: relative;
     padding-bottom: 40px;
 }
-
+.output-box .text-output-mode p:empty::after{
+    content: "......請在上方輸入文字";
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    font-weight: 300;
+}
 .output-box  .copy-button{
  
     gap: var(--box-margin-right-thin);
@@ -366,10 +372,10 @@ body.lightmode{
     opacity: 1;
     clip-path: inset(0 0% 0 0%);
 }
-.output-box.text-mode  .quick-output-mode{
+.output-box[data-output-mode="text-output-mode"]  .quick-output-mode{
     display :none !important;
 }
-.output-box.quick-mode .text-output-mode{
+.output-box[data-output-mode="quick-output-mode"] .text-output-mode{
     display :none !important;
 }
 
@@ -400,9 +406,10 @@ body.lightmode{
 .quick-output-mode  .character .radical{
 
     text-align: center;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-rows: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
     width: 100%;
     padding: 8px var(--body-padding-x-thin) 0 var(--body-padding-x-thin);
 }

@@ -69,13 +69,14 @@ chrome.runtime.onMessage.addListener(
         const {
             mode, 
             selectedText,  
-            processedResult
-         } = request;
+            processedResult,
+            noCopy = false
+        } = request;
 
         if(convertType[mode]){
             result = convertType[mode](selectedText, processedResult)
         }   
-        if(result){
+        if(result && !noCopy){
             copyToClipboard(result);
         }
  
@@ -87,3 +88,18 @@ chrome.runtime.onMessage.addListener(
 );
 
 
+const sendMessageToBackground = (requestType, props ) => {
+    return new Promise((resolve,reject) => {
+        if(chrome.runtime){
+ 
+            chrome.runtime.sendMessage({requestType, props}, resolve);
+        }else{
+            reject("chrome.runtime is undefined");
+        }
+    })
+
+ 
+}
+async function backgroundConsoleLog(...args){
+    return sendMessageToBackground("background-console-log",[...args]);
+}
