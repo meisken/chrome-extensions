@@ -81,6 +81,8 @@ body{
 
     --border: #3D3D41;
     --subheading: #8D8D93;
+
+    --error: #FF3B30;
 }
 body.lightmode{
     --background: #F2F2F7;
@@ -102,6 +104,8 @@ body.lightmode{
 
     --border: #B9B9BB;
     --subheading: #85858B;
+
+    --error: #FF3B30;
 }
 
 .icon-bg-blue{
@@ -306,6 +310,17 @@ body.lightmode{
     height: 238px;
     position: relative;
     padding: var(--body-padding-y-large)  var(--body-padding-x-thin);
+}
+.output-box .error-message-box{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: var(--body-padding-y-large) var(--body-padding-x-thin);
+    color: var(--error);
+    max-width: 80%;
+}
+.output-box .error-message-box:empty{
+    display: none;
 }
 .output-box .text-output-mode p{
 

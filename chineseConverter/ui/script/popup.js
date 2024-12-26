@@ -26,11 +26,25 @@ const outputModeNames = {
     [contextMenuIds.zhToQuick]: "quick-output-mode",
     [contextMenuIds.textToImage]: "text-output-mode"
 }
+const printError = (err) => {
+    const errorMessageBox = document.querySelector("#error-message-box");
+    if(errorMessageBox){
+        errorMessageBox.textContent = `Error: ${err}`
+    }
+}
+const clearErrorMessage = () => {
+    const errorMessageBox = document.querySelector("#error-message-box");
+    if(errorMessageBox){
+        errorMessageBox.textContent = ""
+    }
+}
 let convertedOutput;
 const clearInput = () => {
     const textConvertInput = document.querySelector("#search-input");
     if(textConvertInput){
         textConvertInput.value = "";
+    }else{
+        printError("textConvertInput does not exist")
     }
 }
 const clearOutput = () => {
@@ -38,18 +52,27 @@ const clearOutput = () => {
     const quickOutputTarget = document.querySelector(".quick-output-mode.output-target");
     if( textOutputTarget){
         textOutputTarget.textContent = "";
+    }else{
+        printError("textOutputTarget does not exist");
     }
     if(quickOutputTarget){
         quickOutputTarget.innerHTML = "";
+    }else{
+        printError("quickOutputTarget does not exist");
     }
 }
 const outputModes = {
     "text-output-mode": (result) => {
 
         const outputTarget = document.querySelector(".text-output-mode .output-target");
-        if(outputTarget && result !== undefined && typeof result === 'string'){
-            outputTarget.textContent = result;
-            convertedOutput = result;
+
+        if(outputTarget !== undefined){
+            if(result !== undefined && typeof result === 'string'){
+                outputTarget.textContent = result;
+                convertedOutput = result;
+            }
+        }else{
+            printError("outputTarget does not exist");
         }
 
     },
@@ -83,6 +106,8 @@ const outputModes = {
                             }
                 
                         });
+                    }else{
+                        printError("outputTarget does not exist");
                     }
 
             
@@ -97,17 +122,24 @@ const outputModes = {
 }
 
 const sendMessageToContent = (props, callback) => {
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    if(chrome){
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       
-        if(tabs[0]){
-            chrome.tabs.sendMessage(
-                tabs[0].id, 
-                props, 
-                callback
-            )
-        }
+            if(tabs[0]){
+                chrome.tabs.sendMessage(
+                    tabs[0].id, 
+                    props, 
+                    callback
+                )
+            }else{
+                printError("no valid chrome tab is found");
+            }
+    
+        })
+    }else{
+        printError("you can't use converter on this page");
+    }
 
-    })
 
 }
 const copyToClipboard = (text) => {
@@ -115,19 +147,25 @@ const copyToClipboard = (text) => {
 }
 const switchPage = (pageName) => {
     const pagesContainer = document.querySelector(".pages-container");
-    if(pageName === "detail"){
-        pagesContainer.classList.add("detail");
+    if(pagesContainer){
+        if(pageName === "detail"){
+            pagesContainer.classList.add("detail");
+        }else{
+            pagesContainer.classList.remove("detail");
+        }
     }else{
-        pagesContainer.classList.remove("detail");
+        printError("pagesContainer does not exist")
     }
+
 }
 const sendMessageToBackground = (requestType, props ) => {
     return new Promise((resolve,reject) => {
-        if(chrome.runtime){
+        if(chrome?.runtime){
  
             chrome.runtime.sendMessage({requestType, props}, resolve);
         }else{
-            reject("chrome.runtime is undefined");
+            printError("you can't use converter on this page");
+            reject("you can't use converter on this page");
         }
     })
 
@@ -182,6 +220,8 @@ const registerCheckboxesListeners = () => {
                     })
                 })
     
+            }else{
+                printError("no checkbox is found");
             }
         });
     }
@@ -195,37 +235,43 @@ const registerCheckboxesListeners = () => {
                 checkboxes.forEach((checkbox) => {
                     
                     checkbox.addEventListener("change", async (e) => {
-                    
-                        if(settingsSectionNames[key] === settingsSectionNames.convertMode){
-                            const current = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.convertMode], "")
-                            await updateSettings(key,{
-                                current 
-                            });
-                            if(storedSettings){
-                                updateCovertModeInDom(current, storedSettings.contextMenuName[current]);
+                        try{
+                            if(settingsSectionNames[key] === settingsSectionNames.convertMode){
+                                const current = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.convertMode], "")
+                                await updateSettings(key,{
+                                    current 
+                                });
+                                if(storedSettings){
+                                    updateCovertModeInDom(current, storedSettings.contextMenuName[current]);
+                                }
+                         
                             }
-                     
+                            if(settingsSectionNames[key] === settingsSectionNames.contextMenu){
+                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.contextMenu], "");
+                                await updateSettings(key,{
+                                    [itemKey]: checkbox.checked
+                                })
+                            }
+                            if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
+                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.rightClickBehavior], "");
+                                await updateSettings(key,{
+                                    [itemKey]: checkbox.checked
+                                })
+                            }
+                            await requestStoredSettings();
+                        }catch(err){
+                            printError(err);
                         }
-                        if(settingsSectionNames[key] === settingsSectionNames.contextMenu){
-                            const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.contextMenu], "");
-                            await updateSettings(key,{
-                                [itemKey]: checkbox.checked
-                            })
-                        }
-                        if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
-                            const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.rightClickBehavior], "");
-                            await updateSettings(key,{
-                                [itemKey]: checkbox.checked
-                            })
-                        }
-                        await requestStoredSettings()
+
                      
                     });
                 });
+            }else{
+                printError("no checkbox is found");
             }
         }
     }
-    checkboxOnChangeListers()
+    checkboxOnChangeListers();
 }
 
 
@@ -234,19 +280,19 @@ const convertType = {
     [contextMenuIds.zhToCn]: (mode, text, callback) => {      
         sendMessageToContent({selectedText: text, mode, noCopy: true}, (result) => { 
             callback(result);
-        })
+        });
     },
     [contextMenuIds.cnToZh]: (mode, text, callback) => {
         sendMessageToContent({selectedText: text, mode, noCopy: true}, (result) => { 
             callback(result);
-        })
+        });
     },
     [contextMenuIds.quickToZh]: (mode, text, callback) => {
         sendMessageToBackground("request-quick-conversion",{mode, text}).then((result) => {
             callback(result)
         }).catch((err) => {
 
-        })
+        });
 
     },
     [contextMenuIds.zhToQuick]: (mode, text, callback) => {
@@ -254,7 +300,7 @@ const convertType = {
             callback(result)
         }).catch((err) => {
             
-        })
+        });
     },
     [contextMenuIds.textToImage]: (mode, text, callback) => {
    
@@ -290,15 +336,18 @@ const registerSearchInputOnChangeListener = () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(async () => {
                 try{
+                    clearErrorMessage();
                     const result = await requestTextProcess(e.target.value, storedSettings.convertMode.current);
                     outputModes[outputModeNames[storedSettings.convertMode.current]](result);
-                
+                    
                 }catch(err){
-    
+                    printError(err);
                 }
             }, 500)
     
         });
+    }else{
+        printError("textConvertInput does not exist");
     }
 
     // storedSettings.convertMode.current
@@ -319,11 +368,13 @@ const registerCopyButtonOnClickListener = () => {
                     changeStatusText("Copy");
                 },1500)
             }else{
-
+                printError("no valid output is found");
             }
 
      
         })
+    }else{
+        printError("copyButton does not exist");
     }
 }
 const registerCrossButtonListener = () => {
@@ -338,15 +389,29 @@ const registerReminderToggleListener = () => {
     if(reminderToggle){
         reminderToggle.addEventListener("change",async () => {
   
-            await updateSettings("reminder",{
-                enabled: reminderToggle.checked
-            });
-            await requestStoredSettings()
+            try{
+                await updateSettings("reminder",{
+                    enabled: reminderToggle.checked
+                });
+                await requestStoredSettings()
+            }catch(err){
+                printError(err);
+            }
         })
+    }else{
+        printError("reminderToggle does not exist");
     }
 }
 async function backgroundConsoleLog(...args){
-    return sendMessageToBackground("background-console-log",[...args]);
+    if(chrome?.runtime){
+        return sendMessageToBackground("background-console-log",[...args]);
+    }else{
+        return new Promise((resolve) => {
+            console.log(...args);
+            resolve();
+        })
+    }
+
 }
 async function updateSettings(key, newState){
     return sendMessageToBackground("update-settings",{key, newState});
@@ -359,7 +424,7 @@ const requestStoredSettings = () => {
             storedSettings = userSettings;
             resolve(userSettings);
         }catch(err){
-            reject("requestStoredSettings",err)
+            reject(err)
         }
     })
 }
@@ -511,17 +576,17 @@ const main = async () => {
     //on popup show
     try{
         await initializeSettings();
+
     }catch(err){
         
-        backgroundConsoleLog("err",err);
+        printError(err);
     }
     registerPageSwitchButtonListeners();
-    registerCheckboxesListeners();
-    requestStoredSettings();
     registerSearchInputOnChangeListener();
     registerCopyButtonOnClickListener();
     registerCrossButtonListener();
     registerReminderToggleListener();
+    registerCheckboxesListeners();
 }
 
 
