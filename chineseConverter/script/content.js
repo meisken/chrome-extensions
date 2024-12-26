@@ -78,12 +78,13 @@ chrome.runtime.onMessage.addListener(
         }   
         if(result && !noCopy){
             copyToClipboard(result);
+            requestStoredSettings().then((settings) => {
+                if(settings?.reminder?.enabled){
+                    alert(`已複製到剪貼簿 (你可以在跳出視窗關閉這功能 點一下右上角icon打開跳出視窗)`)
+                }
+            })
         }
-        requestStoredSettings().then((settings) => {
-            if(settings?.reminder?.enabled){
-                alert(`已複製到剪貼簿 (你可以在跳出視窗關閉這功能 點一下右上角icon打開跳出視窗)`)
-            }
-        })
+
 
   
         sendResponse(result)
