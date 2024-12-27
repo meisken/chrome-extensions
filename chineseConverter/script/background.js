@@ -182,15 +182,17 @@ const initFetchForSettings = async () => {
             await storeSettings();
             console.log("settings initialized");
         }else{
-            settings.contextMenu = {
-                ...settings.contextMenu,
-                ...storedSettings[storedSettingsName].contextMenu
-            };
-            settings.convertMode = storedSettings[storedSettingsName].convertMode;
-            settings.rightClickBehavior = {
-                ...settings.rightClickBehavior,
-                ...storedSettings[storedSettingsName].rightClickBehavior
-            }
+
+            Object.keys(settings).forEach((key) => {
+
+                if(storedSettings[storedSettingsName][key]){
+                    settings[key] = {
+                        ...settings[key],
+                        ...storedSettings[storedSettingsName][key]
+                    }
+                }
+             
+            })
         }
         
         resolve();
