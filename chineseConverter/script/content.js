@@ -3,8 +3,10 @@ const contextMenuIds = {
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
-    textToImage: "text-image"
+    textToImage: "text-image",
+    saveImage: "save-image"
 }
+
 
 
 const copyToClipboard = (text) => {

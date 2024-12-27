@@ -3,7 +3,8 @@ const contextMenuIds = {
     cnToZh: "cn-zh",
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
-    textToImage: "text-image"
+    textToImage: "text-image",
+    saveImage: "save-image"
 }
 //may make customizable context menu name
 const settings = {
@@ -20,6 +21,7 @@ const settings = {
         [contextMenuIds.quickToZh]: true,
         [contextMenuIds.zhToQuick]: true,
         [contextMenuIds.textToImage]: true,
+        [contextMenuIds.saveImage]: true,
     },
     contextMenuName: {
         [contextMenuIds.zhToCn]: "繁轉簡",
@@ -27,6 +29,7 @@ const settings = {
         [contextMenuIds.quickToZh]: "速成碼轉繁",
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
         [contextMenuIds.textToImage]: "文字轉圖片",
+        [contextMenuIds.saveImage]: "以圖片儲存已選文字",
     },
     reminder: {
         enabled: true
@@ -45,7 +48,10 @@ const rightClickActions = {
     },
     [contextMenuIds.quickToZh]: (_,selectedText) => {
         return quickConvertToZh(selectedText);
-    }
+    },
+    [contextMenuIds.textToImage]: (_, selectedText) => {
+       //process on content.js
+    }   
 }
 const requestTypes = {
     "request-stored-settings": (props) => {
