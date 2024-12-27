@@ -83,6 +83,8 @@ body{
     --subheading: #8D8D93;
 
     --error: #FF3B30;
+
+    overflow-x: clip;
 }
 body.lightmode{
     --background: #F2F2F7;
@@ -339,6 +341,11 @@ body.lightmode{
     opacity: 0.4;
     font-weight: 300;
 }
+.output-box .text-output-mode img{
+    max-width: 100%;
+
+    object-fit: cover;
+}
 .output-box  .copy-button{
  
     gap: var(--box-margin-right-thin);
@@ -387,7 +394,9 @@ body.lightmode{
     opacity: 1;
     clip-path: inset(0 0% 0 0%);
 }
-.output-box[data-output-mode="text-output-mode"]  .quick-output-mode{
+.output-box[data-output-mode="text-output-mode"]  .quick-output-mode,
+.output-box[data-output-mode="image-output-mode"]  .quick-output-mode
+{
     display :none !important;
 }
 .output-box[data-output-mode="quick-output-mode"] .text-output-mode{
@@ -611,4 +620,41 @@ body.lightmode{
 }
 .detail-setting-container .setting-section .setting-row:has(> input[type="checkbox"]:checked) .icon img{
     opacity: 1;
+}
+
+.text-to-image-template{
+    position: fixed;
+    z-index: -1;
+    left: 0;
+    top: 0;
+    transform: translate(-100%,-100%);
+}
+.text-to-image-template .container{
+    width: 760px;
+    padding: var(--body-padding-y-extra-large);
+    background-color: #000000;
+    min-height: 320px;
+}
+.text-to-image-template .dots{
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(3, 14px);
+    grid-template-rows: 14px;
+    border-radius: 2px;
+
+}
+.text-to-image-template .dots div{
+    border-radius: 50%;
+}
+.text-to-image-template .red{
+    background-color: #FF5F56;
+}
+.text-to-image-template .yellow{
+    background-color: #FFBD2E;
+}
+.text-to-image-template .green{
+    background-color: #27C93F;
+}
+.text-to-image-template .output-target{
+    padding: var(--body-padding-y-extra-large) 0;
 }

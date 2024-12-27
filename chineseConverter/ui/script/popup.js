@@ -24,7 +24,7 @@ const outputModeNames = {
     [contextMenuIds.cnToZh]: "text-output-mode",
     [contextMenuIds.quickToZh]: "text-output-mode",
     [contextMenuIds.zhToQuick]: "quick-output-mode",
-    [contextMenuIds.textToImage]: "text-output-mode"
+    [contextMenuIds.textToImage]: "image-output-mode"
 }
 const printError = (err) => {
     const errorMessageBox = document.querySelector("#error-message-box");
@@ -50,16 +50,25 @@ const clearInput = () => {
 const clearOutput = () => {
     const textOutputTarget = document.querySelector(".text-output-mode .output-target");
     const quickOutputTarget = document.querySelector(".quick-output-mode.output-target");
-    if( textOutputTarget){
+    if( textOutputTarget !== undefined && textOutputTarget !== null){
         textOutputTarget.textContent = "";
+
+
+  
     }else{
         printError("textOutputTarget does not exist");
     }
-    if(quickOutputTarget){
+    if(quickOutputTarget !== undefined && quickOutputTarget !== null){
         quickOutputTarget.innerHTML = "";
     }else{
         printError("quickOutputTarget does not exist");
     }
+
+    const imageOutput = document.querySelector("#image-output");
+    if(imageOutput !== undefined && imageOutput !== null){
+        imageOutput.remove();
+    }
+
 }
 const outputModes = {
     "text-output-mode": (result) => {
@@ -118,6 +127,24 @@ const outputModes = {
             insertCharacterElements(charactersFilterOutStrings);
         }
  
+    },
+    "image-output-mode": (result) => {
+
+        const outputTarget = document.querySelector(".text-output-mode .output-target");
+
+        if(outputTarget !== undefined){
+            if(result !== undefined && typeof result === 'string'){
+                clearOutput();
+                const imageElement = document.createElement("img");
+                imageElement.src = result;
+                imageElement.id = "image-output";
+
+                outputTarget.appendChild(imageElement);
+                convertedOutput = { type: "image" };
+            }
+        }else{
+            printError("outputTarget does not exist");
+        }
     }
 }
 
@@ -303,8 +330,40 @@ const convertType = {
         });
     },
     [contextMenuIds.textToImage]: (mode, text, callback) => {
-   
-      
+
+        const textOutputTarget = document.querySelector(".text-to-image-template .container .output-target");
+        if(textOutputTarget){
+            textOutputTarget.textContent = text;
+        }else{
+            printError("textOutputTarget does not exist");
+            return
+        }
+
+        const textOutputContainer = document.querySelector(".text-to-image-template .container");
+
+        if(html2canvas && textOutputContainer){
+
+            html2canvas(textOutputContainer).then(function(canvas) {
+                const body = document.querySelector("body");
+                body.appendChild(canvas);
+           
+                canvas.style.display = "none";
+            
+                const ctx = canvas.getContext("2d");
+
+                const imageUrl = ctx.canvas.toDataURL();
+                body.removeChild(canvas);
+        
+                
+        
+                callback(imageUrl);
+            }).catch(printError);
+        }else{
+            printError("html2canvas or textOutputContainer does not exist")
+        }
+    
+
+
     },
 }
 
@@ -361,12 +420,31 @@ const registerCopyButtonOnClickListener = () => {
     if(copyButton){
         copyButton.addEventListener("click",() => {
 
-            if(convertedOutput !== undefined && typeof convertedOutput === "string"){
-                copyToClipboard(convertedOutput);
-                changeStatusText("Copied!");
-                setTimeout(() => {
-                    changeStatusText("Copy");
-                },1500)
+            if(convertedOutput !== undefined){
+                if(typeof convertedOutput === "string"){
+                    copyToClipboard(convertedOutput);
+
+                    changeStatusText("Copied!");
+                    setTimeout(() => {
+                        changeStatusText("Copy");
+                    },1500)
+
+                }
+                if("type" in convertedOutput && convertedOutput.type === "image"){
+                    const imageOutput = document.querySelector("#image-output");
+                    if(imageOutput !== undefined){
+                     
+                        copyImageToClipboard(imageOutput.src);
+
+                        changeStatusText("Copied!");
+                        setTimeout(() => {
+                            changeStatusText("Copy");
+                        },1500)
+                        
+                    }else{
+                        printError("image output does not exist");
+                    }
+                }
             }else{
                 printError("no valid output is found");
             }
@@ -547,31 +625,22 @@ const initializeSettings =  () => {
 
  
 }
-
-
-const createTextSnapShot = () => {
-    // const createCanvas = () => {
-    //     const body = document.querySelector("body");
-    //     const canvas = document.createElement("canvas");
-    //     canvas.style.display = "none";
-
-   
-
-    //     body.appendChild(canvas );
-
-    //     const ctx = canvas.getContext("2d");
-    //     ctx.canvas.width =  ctx.measureText(this.value).width;
-    //     ctx.fillText(this.value, 0, 10);
-
-    //     imageElem.src =  ctx.canvas.toDataURL();
-
-    //     return  ctx
-    // }
-    // createCanvas();
-
-
-    // navigator.clipboard.writeText("hello world");
+async function copyImageToClipboard(imgUrl) {
+    try {
+        const data = await fetch(imgUrl);
+        const blob = await data.blob();
+        await navigator.clipboard.write([
+            new ClipboardItem({
+                [blob.type]: blob,
+            }),
+        ]);
+    } catch (err) {
+        printError(`${err.name} ${err.message}`);
+    }
 }
+  
+
+
 const main = async () => {
     //on popup show
     try{
@@ -587,6 +656,8 @@ const main = async () => {
     registerCrossButtonListener();
     registerReminderToggleListener();
     registerCheckboxesListeners();
+
+    // createTextSnapShot();
 }
 
 
