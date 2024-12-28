@@ -58,7 +58,7 @@ const requestTypes = {
         return settings
     },
     "background-console-log": (args) => {
-        console.log(props)
+        console.log(args)
     },
     "update-settings": ({key, newState}) => {
         console.log(key, newState)
