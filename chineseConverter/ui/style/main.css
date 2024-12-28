@@ -658,3 +658,7 @@ body.lightmode{
 .text-to-image-template .output-target{
     padding: var(--body-padding-y-extra-large) 0;
 }
+
+.hidden{
+    display: none !important;
+}
