@@ -431,7 +431,7 @@ const registerCopyButtonOnClickListener = () => {
                     },1500)
 
                 }
-                if("type" in convertedOutput && convertedOutput.type === "image"){
+                if(isObject(convertedOutput) && "type" in convertedOutput && convertedOutput.type === "image"){//bug
                     const imageOutput = document.querySelector("#image-output");
                     if(imageOutput !== undefined){
                      
@@ -664,3 +664,10 @@ const main = async () => {
 
 
 main();
+
+
+
+function isObject(obj)
+{
+    return obj != null && obj.constructor.name === "Object"
+}
