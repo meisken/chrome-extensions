@@ -24,7 +24,7 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": ["script/opencc_js_full.js","script/content.js"]
+            "js": ["script/opencc_js_full.js","./script/html2canvas.min.js","script/content.js"]
         }
     ],
     "icons": {
