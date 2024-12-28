@@ -24,8 +24,8 @@ html, body, h1, h2, h3, h4, h5, h6, p{
     --subheadline-margin-bottom: 18px;
     --section-margin-top: 36px;
 
-    --chinese-font: "Noto Sans TC", serif;
-    --english-font: "Roboto", serif;
+    --chinese-font: "Noto Sans TC", Sans-serif;
+    --english-font: "Roboto", Sans-serif;
 
     --regular-border-radius: 10.5px;
 
@@ -632,7 +632,7 @@ body.lightmode{
 .text-to-image-template .container{
     width: 760px;
     padding: var(--body-padding-y-extra-large);
-    background-color: #000000;
+    background-color: #151718;
     min-height: 320px;
 }
 .text-to-image-template .dots{
