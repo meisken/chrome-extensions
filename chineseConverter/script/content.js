@@ -74,6 +74,8 @@ const convertType = {
         if(html2canvas){
             // const testingElement = document.querySelector("#Panes");
             try{
+                showReminder("開始圖片轉換 (可能需要一點時間完成)");
+
                 const { container, restoreToOrigin , hideNotSelected} = getUserSelection();
                 
                 const findBackgroundColor = (el) => {
@@ -97,6 +99,7 @@ const convertType = {
             
                  
                 }
+              
                 const backgroundColor = findBackgroundColor(container);
                 html2canvas(container, {
                     allowTaint: false,
@@ -160,6 +163,7 @@ async function backgroundConsoleLog(...args){
 const hideElementClass = "hide-element";
 
 const reminderId = "converter-reminder";
+const reminderTImeout = 3000;
 const insertCssClass = () => {
     const style = document.createElement('style');
     style.type = 'text/css';
@@ -229,7 +233,7 @@ const insertCssClass = () => {
    
         }
         .${reminderId}-timer.${reminderId}-animation{
-            animation: progress 2s linear forwards;
+            animation: progress ${reminderTImeout / 1000}s linear forwards;
         }
         @keyframes progress {
             from {  transform: scaleX(1); }
@@ -303,7 +307,7 @@ const showReminder = (text, mode) => {
 
         hideTimerTimeout = setTimeout(() => {
             reminder.classList.add(`${reminderId}-hidden`);
-        }, 2000)
+        }, reminderTImeout)
     }else{
         showReminder("reminder does not exist", "error")
     }
@@ -446,7 +450,7 @@ const main = () => {
                        requestStoredSettings().then((settings) => {
                            if(settings?.reminder?.enabled){
                                 backgroundConsoleLog("working")
-                               showReminder(`已複製到剪貼簿 (你可以在跳出視窗關閉這功能 點一下右上角的icon打開跳出視窗)`)
+                                showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
                            }
                        })
                    }
@@ -461,6 +465,8 @@ const main = () => {
    insertCssClass();
    inertReminder();
 
-
+    window.addEventListener("contextmenu", () => {
+        backgroundConsoleLog("wake up")
+    }); //wake up service worker before the user click the context menu
 }
 main();
