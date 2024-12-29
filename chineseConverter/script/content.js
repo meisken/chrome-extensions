@@ -1,11 +1,4 @@
-const contextMenuIds = {
-    zhToCn: "zh-cn",
-    cnToZh: "cn-zh",
-    quickToZh: "quick-zh",
-    zhToQuick: "zh-quick",
-    textToImage: "text-image",
-    saveImage: "save-image"
-}
+
 
 
 
@@ -77,7 +70,7 @@ const convertType = {
         if(true){
             // const testingElement = document.querySelector("#Panes");
             try{
-                showReminder("開始圖片轉換 (可能需要一點時間完成)");
+          
 
 
                 const button = document.querySelector("#converter-convert-button");
@@ -86,6 +79,7 @@ const convertType = {
 
            
                 if(isExist(button) && isExist(statusIndictor) && isExist(outputImage)){
+                    showReminder("開始圖片轉換 (可能需要一點時間完成)");
                     const statusIndictorListener = () => {
                         const status = statusIndictor.getAttribute("data-status");
                         const message = statusIndictor.getAttribute("data-message");
@@ -109,7 +103,7 @@ const convertType = {
                 
                     return
                 }else{
-                    showReminder("convert-button or status-indictor  not found", "error");
+                    showReminder("刷新網頁(F5)後才能重新啟用文字轉圖片", "error");
                 }
 
             }catch(err){
@@ -119,32 +113,6 @@ const convertType = {
         }
       
     },
-}
-
-const sendMessageToBackground = (requestType, props ) => {
-    return new Promise((resolve,reject) => {
-        if(chrome.runtime){
- 
-            chrome.runtime.sendMessage({requestType, props}, resolve);
-        }else{
-            reject("chrome.runtime is undefined");
-        }
-    })
-
- 
-}
-const requestStoredSettings = () => {
-    return new Promise(async (resolve, reject) => {
-        try{
-            const userSettings = await sendMessageToBackground("request-stored-settings");
-            resolve(userSettings);
-        }catch(err){
-            reject("requestStoredSettings",err)
-        }
-    })
-}
-async function backgroundConsoleLog(...args){
-    return sendMessageToBackground("background-console-log",[...args]);
 }
 
 const hideElementClass = "hide-element";
@@ -339,12 +307,12 @@ const main = () => {
                         }else{
                             copyToClipboard(result);
                         }
-                
-                       requestStoredSettings().then((settings) => {
-                           if(settings?.reminder?.enabled){
-                                showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
-                           }
-                       })
+                        
+                        requestStoredSettings().then((settings) => {
+                            if(settings?.reminder?.enabled){
+                                    showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
+                            }
+                        })
                    }
                    sendResponse(result);
                    

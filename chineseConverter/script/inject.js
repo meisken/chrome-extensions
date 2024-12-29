@@ -28,8 +28,16 @@ function injectCode(src , mountTarget) {
 }
 
 const injectMain = async () => {
-    await injectCode(chrome.runtime.getURL('script/html2canvas.min.js'), "head");
-    await injectCode(chrome.runtime.getURL('script/textToImage.js'), "body");
+    try{
+        const settings = await requestStoredSettings();
+        if(settings !== undefined && settings.contextMenu[contextMenuIds.textToImage]){
+            await injectCode(chrome.runtime.getURL('script/html2canvas.min.js'), "head");
+            await injectCode(chrome.runtime.getURL('script/textToImage.js'), "body");
+        }
+    }catch(err){
+        console.error(err)
+    }
+
 }
 injectMain()
 
