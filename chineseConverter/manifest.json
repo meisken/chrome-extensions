@@ -24,11 +24,18 @@
             "matches": [
                 "<all_urls>"
             ],
-            "js": ["script/opencc_js_full.js","./script/html2canvas.min.js","script/content.js"]
+            "js": ["script/opencc_js_full.js","script/inject.js","script/content.js"]
         }
     ],
     "icons": {
         "128": "ui/images/chinese_converter_logo_128.png"
-    }
+    },
+    "web_accessible_resources": [
+        {
+          "resources": [ "script/html2canvas.min.js", "script/textToImage.js", "script/purify.min.js" ],
+          "matches": [ "https://*/*" ]
+        }
+    ]
+
 }
 

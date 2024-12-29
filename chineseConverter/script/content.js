@@ -28,6 +28,9 @@ async function copyImageToClipboard(imgUrl) {
 const isString = (variable) => {
     return typeof variable === 'string' || variable instanceof String
 }
+const isExist = (element) => {
+    return element !== null && element !== undefined
+}
 const convertType = {
     [contextMenuIds.zhToCn]: (selectedText, processedResult, callback) => {
 
@@ -71,60 +74,44 @@ const convertType = {
          
     },
     [contextMenuIds.textToImage]: (selectedText, processedResult, callback) => {
-        if(html2canvas){
+        if(true){
             // const testingElement = document.querySelector("#Panes");
             try{
                 showReminder("開始圖片轉換 (可能需要一點時間完成)");
 
-                const { container, restoreToOrigin , hideNotSelected} = getUserSelection();
-                
-                const findBackgroundColor = (el) => {
-                
-                    if(el !== null && el !== undefined){
-                        //[...'rgba(255, 0, 0, 0)'.matchAll(/([0-9]\.?[0-9]*)/gm)]
-                        const extractRgbaValue = (string) => {
-                            return [...string.matchAll(/([0-9]\.?[0-9]*)/gm)]
-                        }
-                        const bg = window.getComputedStyle(el).backgroundColor;
-                        
-                        const rgba = extractRgbaValue(bg);
-                        if(bg !==  "" && bg !== undefined && (rgba.length === 3  || (rgba[3] !== undefined && rgba[3][0] !== "0")) ){
-                 
-                            return bg
+
+                const button = document.querySelector("#converter-convert-button");
+                const statusIndictor = document.querySelector("#converter-status-indicator");
+                const outputImage = document.querySelector("#converter-image-output");
+
+           
+                if(isExist(button) && isExist(statusIndictor) && isExist(outputImage)){
+                    const statusIndictorListener = () => {
+                        const status = statusIndictor.getAttribute("data-status");
+                        const message = statusIndictor.getAttribute("data-message");
+                        if(status === "done"){
+                            const imageSrc = outputImage.src;
+                            callback(imageSrc);
+                        }else if(status === "error"){
+                            showReminder(message, "error");
                         }else{
-                            return findBackgroundColor(el.parentNode)
+                            showReminder("unknown status", "error");
                         }
-                
+                    
+                        statusIndictor.removeEventListener("click", statusIndictorListener);
                     }
-            
-                 
-                }
+                    statusIndictor.addEventListener("click", statusIndictorListener);
+                    
+                    setTimeout(() => {
+                        button.click();
+                    }, 1)
               
-                const backgroundColor = findBackgroundColor(container);
-                html2canvas(container, {
-                    allowTaint: false,
-                    useCORS: true,
-                    logging: false,
-                    backgroundColor: typeof backgroundColor === "string" ? backgroundColor : undefined
-                }).then(function(canvas) {
-                    const body = document.querySelector("body");
-                    body.appendChild(canvas);
-               
-                    canvas.style.display = "none";
                 
-                    const ctx = canvas.getContext("2d");
-                
-                    const imageUrl = ctx.canvas.toDataURL();
-                    body.removeChild(canvas);
-    
-    
-    
-                    callback({imageUrl, restoreToOrigin , hideNotSelected});
-    
-                }).catch((err) => { 
-                    showReminder(err, "error");
-    
-                });
+                    return
+                }else{
+                    showReminder("convert-button or status-indictor  not found", "error");
+                }
+
             }catch(err){
                 showReminder(err, "error");
             }
@@ -320,108 +307,9 @@ const hideReminder = () => {
     }
 
 }
-const getUserSelection = () => {
-    const selection = window.getSelection();
-
-    const selectionStart = selection.anchorNode;
-    const selectionEnd = selection.focusNode;
-
-    const wordOffset = {
-        start: selection.anchorOffset,
-        end: selection.focusOffset
-    }//This is mean how many words is selected or missing in start element or end element
-
-    
-
-    const getSelectionDirection = (selection) => {
-    
-
-        let position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
-    
-    
-        let backward = false;
-        // position == 0 if nodes are the same
-        if (!position && selection.anchorOffset > selection.focusOffset || position === Node.DOCUMENT_POSITION_PRECEDING){
-            backward = true; 
-         
-        }
-        return backward
-    }
-
-    const direction = getSelectionDirection(selection);
-
-
-    const range = selection.getRangeAt(0);
-
-    const selectionContainer = range.commonAncestorContainer;
-    const children = selectionContainer.children;
-
-    return {    
-        restoreToOrigin: () => {},
-        container: selectionContainer.constructor.name.includes("HTML") ? selectionContainer : selectionContainer.parentNode
-    }
-
-    if(selectionContainer === selectionStart && selectionStart === selectionEnd){
-        return {    
-            restoreToOrigin: () => {},
-            container: selectionContainer.constructor.name.includes("HTML") ? selectionContainer : selectionContainer.parentNode
-        }
-    }else{
-        let startIndex,endIndex;
-        [...children].forEach((child, i) => { 
-    
-            if(child.contains(selectionStart)){
-    
-                startIndex = i
-            }
-            if(child.contains(selectionEnd)){
-    
-                endIndex= i
-            }
-        });
-        console.info(startIndex,endIndex, children, selectionStart, selectionEnd)
-        const notSelectedElements = [...children].filter((el,i) => {
-    
-            return !(i >= startIndex && i <=endIndex)
-        });
-        const hideElements = (elements) => {
-    
-            if(elements.length > 0){
-                elements.forEach((element) => {
-                    element.classList.add(hideElementClass)
-                })
-            }
-        
-             
-        }
-        const showElements = (elements) => {
-        
-            if(elements.length > 0){
-                elements.forEach((element) => {
-                    element.classList.remove(hideElementClass)
-                })
-            }
-        
-        }
-        const hideNotSelected = () => {
-            hideElements(notSelectedElements);
-    
-        }
-        hideNotSelected();
-        const restoreToOrigin = () => {
-            showElements(notSelectedElements);
-        }
-        return {
-            restoreToOrigin,
-            container: selectionContainer
-        }
-    }
-
-
-
-}
 
 const main = () => {
+
     chrome.runtime.onMessage.addListener( 
         function(request, sender, sendResponse) {
    
@@ -439,17 +327,21 @@ const main = () => {
                   
                    
                         if(mode === contextMenuIds.textToImage){
-                            const {imageUrl, restoreToOrigin} = result;
+                            const imageUrl = result;
                  
                             copyImageToClipboard(imageUrl);
-                            restoreToOrigin();
+                            const isCopiedIndicator = document.querySelector("#converter-isCopiedIndicator");
+
+                            if(isExist(isCopiedIndicator)){
+                                isCopiedIndicator.click();
+                            }
+                            // restoreToOrigin();
                         }else{
                             copyToClipboard(result);
                         }
                 
                        requestStoredSettings().then((settings) => {
                            if(settings?.reminder?.enabled){
-                                backgroundConsoleLog("working")
                                 showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
                            }
                        })
@@ -462,11 +354,12 @@ const main = () => {
                
        }
    );
+
    insertCssClass();
    inertReminder();
 
     window.addEventListener("contextmenu", () => {
         backgroundConsoleLog("wake up")
-    }); //wake up service worker before the user click the context menu
+    }); //wake up service worker before the user click the context
 }
 main();
