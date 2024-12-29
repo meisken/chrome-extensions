@@ -1,0 +1,70 @@
+#converter-reminder{
+    position: fixed;
+    z-index: 99999;
+    right: 20px;
+    top: 20px;
+    box-shadow: 4px 8px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+#converter-reminder.converter-reminder-hidden{
+    transform: translateY(calc(-100% - 20%))
+}
+#converter-reminder .converter-reminder-container{
+    width: 320px;
+    padding: 16px;
+    background-color: #151718;
+    min-height: 120px;
+}
+#converter-reminder .converter-reminder-dots{
+    display: grid;
+    gap: 6px;
+    grid-template-columns: repeat(3, 12px);
+    grid-template-rows: 12px;
+    border-radius: 10.5px;
+
+}
+#converter-reminder .converter-reminder-dots div{
+    border-radius: 50%;
+}
+#converter-reminder .converter-reminder-red{
+    background-color: #FF5F56;
+}
+#converter-reminder .converter-reminder-yellow{
+    background-color: #FFBD2E;
+}
+#converter-reminder .converter-reminder-green{
+    background-color: #27C93F;
+}
+.converter-reminder-text-output{
+    padding: 16px 0;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: 0.5px;
+    font-weight: 400;
+    color: #ffffff;
+    font-family: Sans-serif;
+    color: #FFFFFF;
+}
+.converter-reminder-text-output.converter-reminder-error{
+    color: #FF3B30;
+}
+.converter-reminder-timer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #33C458;
+    transform-origin: left;
+
+}
+.converter-reminder-timer.converter-reminder-animation{
+    animation: progress 3s linear forwards;
+}
+@keyframes progress {
+    from {  transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}

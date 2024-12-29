@@ -119,86 +119,7 @@ const hideElementClass = "hide-element";
 
 const reminderId = "converter-reminder";
 const reminderTImeout = 3000;
-const insertCssClass = () => {
-    const style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = `
-        .${hideElementClass} { display: none !important; }
-        #${reminderId}{
-            position: fixed;
-            z-index: 99999;
-            right: 20px;
-            top: 20px;
-            box-shadow: 4px 8px 12px rgba(0, 0, 0, 0.1);
-            transform: translateY(0);
-            transition: transform 0.3s ease-in-out;
-            cursor: pointer;
-        }
 
-        #${reminderId}.${reminderId}-hidden{
-            transform: translateY(calc(-100% - 20%))
-        }
-        #${reminderId} .${reminderId}-container{
-            width: 320px;
-            padding: 16px;
-            background-color: #151718;
-            min-height: 120px;
-        }
-        #${reminderId} .${reminderId}-dots{
-            display: grid;
-            gap: 6px;
-            grid-template-columns: repeat(3, 12px);
-            grid-template-rows: 12px;
-            border-radius: 10.5px;
-
-        }
-        #${reminderId} .${reminderId}-dots div{
-            border-radius: 50%;
-        }
-        #${reminderId} .${reminderId}-red{
-            background-color: #FF5F56;
-        }
-        #${reminderId} .${reminderId}-yellow{
-            background-color: #FFBD2E;
-        }
-        #${reminderId} .${reminderId}-green{
-            background-color: #27C93F;
-        }
-        .${reminderId}-text-output{
-            padding: 16px 0;
-            font-size: 16px;
-            line-height: 22px;
-            letter-spacing: 0.5px;
-            font-weight: 400;
-            color: #ffffff;
-            font-family: Sans-serif;
-            color: #FFFFFF;
-        }
-        .${reminderId}-text-output.${reminderId}-error{
-            color: #FF3B30;
-        }
-        .${reminderId}-timer{
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: #33C458;
-            transform-origin: left;
-   
-        }
-        .${reminderId}-timer.${reminderId}-animation{
-            animation: progress ${reminderTImeout / 1000}s linear forwards;
-        }
-        @keyframes progress {
-            from {  transform: scaleX(1); }
-            to { transform: scaleX(0); }
-        }
-    `;
-    document.getElementsByTagName('head')[0].appendChild(style);
-
-
-}
 
 
 const inertReminder = () => {
@@ -323,7 +244,7 @@ const main = () => {
        }
    );
 
-   insertCssClass();
+
    inertReminder();
 
     window.addEventListener("contextmenu", () => {

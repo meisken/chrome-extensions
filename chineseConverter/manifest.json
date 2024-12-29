@@ -24,6 +24,7 @@
             "matches": [
                 "<all_urls>"
             ],
+            "css": ["style/content.css"],
             "js": ["script/opencc_js_full.js","script/backgroundRequests.js","script/inject.js","script/content.js"]
         }
     ],
