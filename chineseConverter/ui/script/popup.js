@@ -160,7 +160,7 @@ const sendMessageToContent = (props, callback) => {
                     callback
                 )
             }else{
-                printError("no valid chrome tab is found");
+                printError("no valid chrome tab found");
             }
     
         })
@@ -249,7 +249,7 @@ const registerCheckboxesListeners = () => {
                 })
     
             }else{
-                printError("no checkbox is found");
+                printError("no checkbox found");
             }
         });
     }
@@ -295,7 +295,7 @@ const registerCheckboxesListeners = () => {
                     });
                 });
             }else{
-                printError("no checkbox is found");
+                printError("no checkbox found");
             }
         }
     }
@@ -447,7 +447,7 @@ const registerCopyButtonOnClickListener = () => {
                     }
                 }
             }else{
-                printError("no valid output is found");
+                printError("no valid output found");
             }
 
      
