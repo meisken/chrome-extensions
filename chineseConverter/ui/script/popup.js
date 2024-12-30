@@ -17,7 +17,6 @@ const contextMenuIds = {
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
     textToImage: "text-image",
-    saveImage: "save-image"
 }
 
 const outputModeNames = {

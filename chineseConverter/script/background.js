@@ -4,7 +4,7 @@ const contextMenuIds = {
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
     textToImage: "text-image",
-    saveImage: "save-image"
+    // saveImage: "save-image"
 }
 //may make customizable context menu name
 const settings = {
@@ -21,15 +21,14 @@ const settings = {
         [contextMenuIds.quickToZh]: true,
         [contextMenuIds.zhToQuick]: true,
         [contextMenuIds.textToImage]: true,
-        [contextMenuIds.saveImage]: true,
+        // [contextMenuIds.saveImage]: true,
     },
     contextMenuName: {
         [contextMenuIds.zhToCn]: "繁轉簡",
         [contextMenuIds.cnToZh]: "簡轉繁",
         [contextMenuIds.quickToZh]: "速成碼轉繁",
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
-        [contextMenuIds.textToImage]: "文字轉圖片",
-        [contextMenuIds.saveImage]: "以圖片儲存已選文字",
+        [contextMenuIds.textToImage]: "已選部份截圖",
     },
     reminder: {
         enabled: true
