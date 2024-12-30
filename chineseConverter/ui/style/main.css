@@ -334,7 +334,7 @@ body.lightmode{
     position: relative;
     padding-bottom: 40px;
 }
-.output-box .text-output-mode p:empty::after{
+.output-box .text-output-mode p:empty::after, .quick-output-mode:empty::after{
     content: "......請在上方輸入文字";
     position: absolute;
     inset: 0;
@@ -404,6 +404,7 @@ body.lightmode{
 }
 
 .quick-output-mode{
+    position: relative;
     width: 100%;
     display: grid;
 
