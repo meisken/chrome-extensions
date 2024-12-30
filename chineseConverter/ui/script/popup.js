@@ -18,6 +18,13 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 }
+const convertModeName = {
+    [contextMenuIds.zhToCn]: "繁轉簡",
+    [contextMenuIds.cnToZh]: "簡轉繁",
+    [contextMenuIds.quickToZh]: "速成碼轉繁",
+    [contextMenuIds.zhToQuick]: "繁轉速成碼",
+    [contextMenuIds.textToImage]: "文字轉圖片",
+}
 
 const outputModeNames = {
     [contextMenuIds.zhToCn]: "text-output-mode",
@@ -269,7 +276,7 @@ const registerCheckboxesListeners = () => {
                                     current 
                                 });
                                 if(storedSettings){
-                                    updateCovertModeInDom(current, storedSettings.contextMenuName[current]);
+                                    updateCovertModeInDom(current, convertModeName[current]);
                                 }
                          
                             }
@@ -581,7 +588,7 @@ const initializeSettings =  () => {
                     reject("convertMode checkbox does not exist");
                 }
 
-                updateCovertModeInDom(convertMode.current, contextMenuName[convertMode.current]);
+                updateCovertModeInDom(convertMode.current, convertModeName[convertMode.current]);
             }else{
                 reject("convertMode is undefined");
             }
