@@ -5,108 +5,171 @@
 const getUserSelection = () => {
     const selection = window.getSelection();
 
-    const selectionStart = selection.anchorNode;
-    const selectionEnd = selection.focusNode;
-
-    const wordOffset = {
-        start: selection.anchorOffset,
-        end: selection.focusOffset
-    }//This is mean how many words is selected or missing in start element or end element
-
-    
-
-    const getSelectionDirection = (selection) => {
-    
-
-        let position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
-    
-    
-        let backward = false;
-        // position == 0 if nodes are the same
-        if (!position && selection.anchorOffset > selection.focusOffset || position === Node.DOCUMENT_POSITION_PRECEDING){
-            backward = true; 
-         
-        }
-        return backward
+    if(selection.isCollapsed){
+        throw new Error("no selection found");
     }
 
-    const direction = getSelectionDirection(selection);
 
+    const getSelectionDirection = (selection) => {
+        const directionList = ["forward","backward","self"];
+        
+        let position = selection.anchorNode.compareDocumentPosition(selection.focusNode);
+        if(position === 0){
+            return directionList[2] ;
+        }
+    
+        if (!position && selection.anchorOffset > selection.focusOffset || position === Node.DOCUMENT_POSITION_PRECEDING){
+
+            return directionList[1];
+         
+        }else{
+            return directionList[0];
+        }
+
+    }
+
+
+    
 
     const range = selection.getRangeAt(0);
 
     const selectionContainer = range.commonAncestorContainer;
-    const children = selectionContainer.children;
+    const direction = getSelectionDirection(selection);
+    const isElement = (node) => {
+        return node.constructor.name.includes("HTML");
+    }
+    const isExist = (element) => {
+        return element !== null && element !== undefined;
+    }
+    const addPadding = (el) => {
 
-    return {    
-        restoreToOrigin: () => {},
-        selectionContainer: selectionContainer.constructor.name.includes("HTML") ? selectionContainer : selectionContainer.parentNode
+        //selectionContainer
+        if(isElement(el)){
+    
+            const { paddingTop, paddingBottom, paddingLeft, paddingRight } = window.getComputedStyle(el);
+    
+            const toNumber = (padding) => {
+                const paddingNumber = parseInt(padding.replace("px",""));
+                if(paddingNumber !== NaN){
+                    return paddingNumber
+                }else{
+                    throw new Error("paddingNumber is not a number");
+                }
+            }
+            const paddingNumbers = {
+                top: toNumber(paddingTop),
+                bottom: toNumber(paddingBottom),
+                left: toNumber(paddingLeft),
+                right: toNumber(paddingRight),
+            }
+
+            if(paddingNumbers.left === 0 && paddingNumbers.right === 0){
+                el.style.paddingLeft = "16px";
+                el.style.paddingRight = "16px";
+            }
+            if(paddingNumbers.top === 0 && paddingNumbers.bottom === 0){
+                el.style.paddingTop = "16px";
+                el.style.paddingBottom = "16px";
+            }
+        }else{
+            throw new Error("no element is passed to addPadding");
+        }
+    
     }
 
-    if(selectionContainer === selectionStart && selectionStart === selectionEnd){
-        return {    
-            restoreToOrigin: () => {},
-            container: selectionContainer.constructor.name.includes("HTML") ? selectionContainer : selectionContainer.parentNode
+    const removePadding = (el) => {
+        if(isElement(el)){
+            el.style.paddingLeft = "";
+            el.style.paddingRight = "";
+            el.style.paddingTop = "";
+            el.style.paddingBottom = "";
         }
-    }else{
-        let startIndex,endIndex;
-        [...children].forEach((child, i) => { 
+    }
     
-            if(child.contains(selectionStart)){
+
+
+    if(direction !== "self" && isElement(selectionContainer)){
+
+
+        const selectionEndElement = direction === "forward" ? selection.focusNode : selection.anchorNode;
+
+        const { top: selectionEndElementTop, height: selectionEndElementHeight } = isElement(selectionEndElement) ? selectionEndElement.getBoundingClientRect() : selectionEndElement.parentNode.getBoundingClientRect();
+   
+        const { top: selectionContainerTop, height: selectionContainerHeight } = selectionContainer.getBoundingClientRect();
+   
+        const selectionEndBottom = selectionEndElementTop + selectionEndElementHeight;
+        const selectionContainerBottom = selectionContainerTop + selectionContainerHeight;
+
+        const snapshotAllowExtendOffset = 150;
+
+        const children = selectionContainer.children;
+
+        addPadding(selectionContainer);
+
+
+
+
+        if(selectionContainerBottom - selectionEndBottom > snapshotAllowExtendOffset && children.length > 2 &&  isExist(selection.focusNode) && isExist(selection.anchorNode)){
+            console.log( selectionContainer.children, selectionContainer);
+            [...children].forEach((child, i) => { 
+
+
+                const startElement = direction === "forward" ? selection.anchorNode : selection.focusNode;
+                const endElement = direction === "forward" ? selection.focusNode : selection.anchorNode;
+
+                if(child.contains(startElement)){
+        
+                    startIndex = i;
+                }
+                if(child.contains(endElement)){
+        
+                    endIndex= i;
+                }
+            });
+         
+            const notSelectedElements = [...children].filter((el,i) => {
     
-                startIndex = i
-            }
-            if(child.contains(selectionEnd)){
-    
-                endIndex= i
-            }
-        });
-        console.info(startIndex,endIndex, children, selectionStart, selectionEnd)
-        const notSelectedElements = [...children].filter((el,i) => {
-    
-            return !(i >= startIndex && i <=endIndex)
-        });
-        const hideElements = (elements) => {
-    
-            if(elements.length > 0){
-                elements.forEach((element) => {
-                    element.classList.add(hideElementClass)
-                })
+                return !(i >= startIndex && i <=endIndex);
+            });
+            const restoreElements = (elements) => {
+                if(elements.length > 0){
+                    elements.forEach((element) => {
+                        element.style.display = "";
+                    })
+                }
+                removePadding(selectionContainer);
             }
         
-             
-        }
-        const showElements = (elements) => {
-        
-            if(elements.length > 0){
-                elements.forEach((element) => {
-                    element.classList.remove(hideElementClass)
-                })
+            const hideElements = (elements) => {
+    
+                if(elements.length > 0){
+                    elements.forEach((element) => {
+                        element.style.display = "none";
+                    })
+                }
+            
+                 
             }
-        
-        }
-        const hideNotSelected = () => {
             hideElements(notSelectedElements);
     
-        }
-        hideNotSelected();
-        const restoreElements = () => {
-            showElements(notSelectedElement)
+            return {    
+                restoreElements: () => { 
+                    restoreElements(notSelectedElements);
+                },
+                selectionContainer: isElement(selectionContainer) ? selectionContainer : selectionContainer.parentNode
+            }
         }
 
-        const isCopiedIndicator = document.querySelector("#converter-isCopiedIndicator");
-        const onCopied = () => {
-            restoreElements();
-            isCopiedIndicator.removeEventListener("click", onCopied);
-        }
-        isCopiedIndicator.addEventListener("click", onCopied);
-   
-        
-        return {
- 
-            container: selectionContainer
-        }
     }
+
+
+    const willBeCopiedElement = isElement(selectionContainer) ? selectionContainer : selectionContainer.parentNode;
+    addPadding(willBeCopiedElement);
+    return {    
+        restoreElements: () => { removePadding(selectionContainer); },
+        selectionContainer:  willBeCopiedElement
+    }
+
 
 
 
@@ -134,13 +197,16 @@ const findBackgroundColor = (el) => {
  
 }
 
+
 const convertSelectionToImage = (callback) => {
     if(window.html2canvas === undefined && globalThis.html2canvas === undefined){
         throw new Error("html2canvas could not load on this page")
     }
 
-    const { selectionContainer, restoreToOrigin } = getUserSelection();
+    const { selectionContainer, restoreElements } = getUserSelection();
+ 
     const backgroundColor = findBackgroundColor(selectionContainer);
+
     html2canvas(selectionContainer, {
         allowTaint: false,
         useCORS: true,
@@ -157,7 +223,7 @@ const convertSelectionToImage = (callback) => {
         const imageUrl = ctx.canvas.toDataURL();
         body.removeChild(canvas);
 
-        callback({imageUrl, restoreToOrigin})
+        callback({imageUrl, restoreElements})
 
         // resolve({imageUrl, restoreToOrigin});
 
@@ -190,7 +256,7 @@ const createElements = () => {
     const statusIndicator = document.createElement("button");
     statusIndicator.id = "converter-status-indicator";
     //content js will add a click listener to confirm the convert is done, and the text is the status
-    setStatus("","");
+
 
     const convertButton = document.createElement("button");
     convertButton.id = "converter-convert-button";
@@ -199,20 +265,29 @@ const createElements = () => {
     outputImage.id = "converter-image-output";
 
     const isCopiedIndicator = document.createElement("button");;
-    isCopiedIndicator.id = "converter-isCopiedIndicator";
+    isCopiedIndicator.id = "converter-is-copied-indicator";
     //it will be added a click listener after hide some element, then reveal those elements back on click (copied)
     
     container.appendChild(statusIndicator);
     container.appendChild(convertButton);
     container.appendChild(outputImage);
+    container.appendChild(isCopiedIndicator);
 
     convertButton.addEventListener("click",() => {
         try{
 
-            convertSelectionToImage(({imageUrl}) => {
+            convertSelectionToImage(({imageUrl, restoreElements}) => {
                 outputImage.src = imageUrl;
                 setStatus("done", "");
+       
+                const onCopied = () => {
+                    restoreElements();
+                    isCopiedIndicator.removeEventListener("click",onCopied)
+                }
+
+                isCopiedIndicator.addEventListener("click",onCopied)
                 statusIndicator.click();
+
             });
 
         
@@ -224,6 +299,7 @@ const createElements = () => {
     })
 
     document.body.appendChild(container);
+    setStatus("","");
 }
 
 createElements();

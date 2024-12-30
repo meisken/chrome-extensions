@@ -219,10 +219,12 @@ const main = () => {
                             const imageUrl = result;
                  
                             copyImageToClipboard(imageUrl);
-                            const isCopiedIndicator = document.querySelector("#converter-isCopiedIndicator");
+                            const isCopiedIndicator = document.querySelector("#converter-is-copied-indicator");
 
                             if(isExist(isCopiedIndicator)){
                                 isCopiedIndicator.click();
+                            }else{
+                                showReminder(`isCopiedIndicator does not exist`)
                             }
                             // restoreToOrigin();
                         }else{
@@ -231,7 +233,7 @@ const main = () => {
                         
                         requestStoredSettings().then((settings) => {
                             if(settings?.reminder?.enabled){
-                                    showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
+                                showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
                             }
                         })
                    }
