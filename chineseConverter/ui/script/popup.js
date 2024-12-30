@@ -481,6 +481,17 @@ const registerReminderToggleListener = () => {
         printError("reminderToggle does not exist");
     }
 }
+const registerHelpButtonListener = () => {
+    const helpButton = document.querySelector(`#help-button`);
+    if(helpButton){
+        helpButton.addEventListener("click",async () => {
+            window.open('https://github.com/meisken/chrome-extensions/tree/main/chineseConverter', "_blank")
+
+        })
+    }else{
+        printError("helpButton does not exist");
+    }
+}
 async function backgroundConsoleLog(...args){
     if(chrome?.runtime){
         return sendMessageToBackground("background-console-log",[...args]);
@@ -657,7 +668,7 @@ const main = async () => {
     registerCrossButtonListener();
     registerReminderToggleListener();
     registerCheckboxesListeners();
-
+    registerHelpButtonListener();
     // createTextSnapShot();
 }
 
