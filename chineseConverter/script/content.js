@@ -58,7 +58,7 @@ const convertType = {
                         radicals,
                         number
                     } = char;
-                    return radicals.join("") + number
+                    return keys.join("") //+ number
                 }
           
             }).join("");
