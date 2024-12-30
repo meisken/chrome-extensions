@@ -319,7 +319,7 @@ const convertType = {
         sendMessageToBackground("request-quick-conversion",{mode, text}).then((result) => {
             callback(result)
         }).catch((err) => {
-
+            printError(err)
         });
 
     },
@@ -327,7 +327,7 @@ const convertType = {
         sendMessageToBackground("request-quick-conversion",{mode, text}).then((result) => {
             callback(result)
         }).catch((err) => {
-            
+            printError(err)
         });
     },
     [contextMenuIds.textToImage]: (mode, text, callback) => {
