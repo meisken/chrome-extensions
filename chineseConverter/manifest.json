@@ -7,11 +7,8 @@
         "scripting", 
         "activeTab",
         "contextMenus",
-        "clipboardRead",
-        "activeTab",
         "clipboardWrite",
         "storage"
-
     ],
     "action": {
         "default_popup": "ui/popup.html"
