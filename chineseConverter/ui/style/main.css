@@ -54,12 +54,9 @@ html, body, h1, h2, h3, h4, h5, h6, p{
     font-family: var(--chinese-font);
     font-weight: 400;
     font-optical-sizing: auto;
-    user-select: none;
     box-sizing: border-box !important;
 }
-input, .output-box{
-    user-select: auto;
-}
+
 body{
     --background: #000000;
     --Surface: #1C1C1E;
@@ -231,6 +228,7 @@ body.lightmode{
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--container-padding-y);
+    user-select: none;
 }
 .main-container > header > h1{
     margin-left: var(--box-margin-right-small);
@@ -312,6 +310,7 @@ body.lightmode{
     height: 238px;
     position: relative;
     padding: var(--body-padding-y-large)  var(--body-padding-x-thin);
+  
 }
 .output-box .error-message-box{
     position: absolute;
@@ -333,7 +332,9 @@ body.lightmode{
     overflow-y: auto;
     position: relative;
     padding-bottom: 40px;
+
 }
+
 .output-box .text-output-mode p:empty::after, .quick-output-mode:empty::after{
     content: "......請在上方輸入文字";
     position: absolute;
@@ -355,7 +356,7 @@ body.lightmode{
     cursor: pointer;
 
 
-
+    user-select: none;
 
     border-radius: 18.5px;
 
@@ -443,6 +444,7 @@ body.lightmode{
     margin-top: var(--section-margin-top);
     border-radius: var(--regular-border-radius);
     background-color: var(--Surface);
+    user-select: none;
 }
 .setting-section .setting-row{
     padding: var(--body-padding-y-large) var(--body-padding-x);
@@ -557,6 +559,7 @@ body.lightmode{
 
 
 .detail-setting-container header {
+    user-select: none;
     position: relative;
 }
 .detail-setting-container header .previous-page-title{
@@ -613,6 +616,7 @@ body.lightmode{
     transform: translateX(4px);
 }
 .section-subheading{
+    user-select: none;
     margin-top: var(--section-margin-top);
     margin-left: var( --arrow-margin-left);
 }
