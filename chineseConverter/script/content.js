@@ -5,15 +5,32 @@
 const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
 }
-async function copyImageToClipboard(imgUrl) {
+async function saveImage(imgUrl,download,copyToClipboard) {
     try {
         const data = await fetch(imgUrl);
         const blob = await data.blob();
-        await navigator.clipboard.write([
-            new ClipboardItem({
-                [blob.type]: blob,
-            }),
-        ]);
+
+        if(copyToClipboard){
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    [blob.type]: blob,
+                }),
+            ]);
+        }
+        if(download){
+            const urlCreator = window.URL || window.webkitURL;
+            imageData = urlCreator.createObjectURL(blob);
+    
+            const link = document.createElement('a');
+            link.href = imageData
+            link.download = 'snapshot';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+
+
     } catch (err) {
         showReminder(`${err.name} ${err.message}`, "error");
     }
@@ -217,25 +234,45 @@ const main = () => {
                    
                         if(mode === contextMenuIds.textToImage){
                             const imageUrl = result;
-                 
-                            copyImageToClipboard(imageUrl);
-                            const isCopiedIndicator = document.querySelector("#converter-is-copied-indicator");
+                            requestStoredSettings().then((settings) => {
+                              
+                                const download = settings.imageConvertBehavior["download"];
+                                const copy = settings.imageConvertBehavior["copy-to-clipboard"];
+                                
+                                saveImage(imageUrl,download,copy);
+                                
+                                const isCopiedIndicator = document.querySelector("#converter-is-copied-indicator");
+    
+                                if(isExist(isCopiedIndicator)){
+                                    isCopiedIndicator.click();
+                                }else{
+                                    showReminder(`isCopiedIndicator does not exist`)
+                                }
 
-                            if(isExist(isCopiedIndicator)){
-                                isCopiedIndicator.click();
-                            }else{
-                                showReminder(`isCopiedIndicator does not exist`)
-                            }
+                                if(settings?.reminder?.enabled){
+                                    const copyMessage = copy ? "已複製到剪貼簿" : "";
+                                    const slash = copy && download ? "/" : "";
+                                    const downloadMessage = download ? "已下載到電腦" : "";
+                                    showReminder(`${copyMessage}${slash}${downloadMessage} (你可以設定關閉這提醒)`)
+                                }
+                                if(!copy && !download){
+                                    showReminder(`沒有已選取的圖片轉換模式`, "error")
+
+                                }
+
+                            })
+             
                             // restoreToOrigin();
                         }else{
                             copyToClipboard(result);
+                            requestStoredSettings().then((settings) => {
+                                if(settings?.reminder?.enabled){
+                                    showReminder(`已複製到剪貼簿 (你可以設定關閉這提醒)`)
+                                }
+                            })
                         }
                         
-                        requestStoredSettings().then((settings) => {
-                            if(settings?.reminder?.enabled){
-                                showReminder(`已複製到剪貼簿 (你可以設定關閉這功能)`)
-                            }
-                        })
+              
                    }
                    sendResponse(result);
                    

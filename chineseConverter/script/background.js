@@ -33,6 +33,10 @@ const settings = {
     reminder: {
         enabled: true
     }, 
+    imageConvertBehavior: {
+        "download": true,
+        "copy-to-clipboard": false
+    }
 }
 const storedSettingsName = "userSettings";
 const rightClickActions = {

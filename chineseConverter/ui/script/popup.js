@@ -2,12 +2,14 @@
 const settingsSectionNames = {
     convertMode: "convert-mode", 
     contextMenu: "context-menu", 
-    rightClickBehavior: "right-click-behavior"
+    imageConvertBehavior: "image-convert-behavior"
+    // rightClickBehavior: "right-click-behavior"
 };
 const checkboxIdPrefixes = {
     [settingsSectionNames.convertMode]: "convert-mode-",
     [settingsSectionNames.contextMenu]: "context-",
-    [settingsSectionNames.rightClickBehavior]: "right-click-behavior-"
+    // [settingsSectionNames.rightClickBehavior]: "right-click-behavior-"
+    [settingsSectionNames.imageConvertBehavior]:"image-convert-behavior-"
 };
 let storedSettings;
 
@@ -286,12 +288,19 @@ const registerCheckboxesListeners = () => {
                                     [itemKey]: checkbox.checked
                                 })
                             }
-                            if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
-                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.rightClickBehavior], "");
+                            if(settingsSectionNames[key] === settingsSectionNames.imageConvertBehavior){
+                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.imageConvertBehavior], "");
                                 await updateSettings(key,{
                                     [itemKey]: checkbox.checked
                                 })
                             }
+                            
+                            // if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
+                            //     const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.rightClickBehavior], "");
+                            //     await updateSettings(key,{
+                            //         [itemKey]: checkbox.checked
+                            //     })
+                            // }
                             await requestStoredSettings();
                         }catch(err){
                             printError(err);
@@ -574,8 +583,10 @@ const initializeSettings =  () => {
                 convertMode, 
                 contextMenu,
                 contextMenuName,
-                rightClickBehavior,
-                reminder
+                // rightClickBehavior,
+                reminder,
+                imageConvertBehavior
+                
             } = userSettings;
 
             if(convertMode !== undefined){
@@ -608,21 +619,21 @@ const initializeSettings =  () => {
                 reject("contextMenu is undefined");
             }
 
-            if(rightClickBehavior !== undefined){
-                Object.keys(rightClickBehavior).forEach(key => {
+            // if(rightClickBehavior !== undefined){
+            //     Object.keys(rightClickBehavior).forEach(key => {
             
-                    if(rightClickBehavior[key]){
-                        const checkbox = document.querySelector(`label[for=${checkboxIdPrefixes[settingsSectionNames.rightClickBehavior]}${key}] input[type="checkbox"]`)
-                        if(checkbox){
-                            checkbox.checked = true;
-                        }else{
-                            reject("rightClickBehavior checkbox does not exist")
-                        }
-                    }
-                })
-            }else{
-                reject("rightClickBehavior is undefined");
-            }
+            //         if(rightClickBehavior[key]){
+            //             const checkbox = document.querySelector(`label[for=${checkboxIdPrefixes[settingsSectionNames.rightClickBehavior]}${key}] input[type="checkbox"]`)
+            //             if(checkbox){
+            //                 checkbox.checked = true;
+            //             }else{
+            //                 reject("rightClickBehavior checkbox does not exist")
+            //             }
+            //         }
+            //     })
+            // }else{
+            //     reject("rightClickBehavior is undefined");
+            // }
             if(reminder !== undefined){
                 const reminderToggle = document.querySelector(`#convert-toggle input[type="checkbox"]`);
                 if(reminderToggle){
@@ -630,6 +641,20 @@ const initializeSettings =  () => {
                 }else{
                     reject("reminderToggle does not exist");
                 }
+            }
+            if(imageConvertBehavior !== undefined){
+                Object.keys(imageConvertBehavior).forEach(key => {
+                    if(imageConvertBehavior[key]){
+                        const checkbox = document.querySelector(`label[for=${checkboxIdPrefixes[settingsSectionNames.imageConvertBehavior]}${key}] input[type="checkbox"]`)
+                        if(checkbox){
+                            checkbox.checked = true
+                        }else{
+                            reject("imageConvertBehavior checkbox does not exist");
+                        }
+                    }
+                })
+            }else{
+                reject("imageConvertBehavior is undefined");
             }
             resolve();
         }catch(err){
