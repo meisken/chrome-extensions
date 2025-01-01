@@ -72,7 +72,7 @@ const getUserSelection = () => {
                 el.style.paddingBottom = "16px";
             }
         }else{
-            throw new Error("no element is passed to addPadding");
+            // throw new Error("找不到所選");
         }
     
     }
@@ -83,6 +83,8 @@ const getUserSelection = () => {
             el.style.paddingRight = "";
             el.style.paddingTop = "";
             el.style.paddingBottom = "";
+        }else{
+            // throw new Error("找不到所選");
         }
     }
     
@@ -90,8 +92,11 @@ const getUserSelection = () => {
 
     if(direction !== "self" && isElement(selectionContainer)){
 
+        const selectionStartElement = direction === "forward" ?  selection.anchorNode : selection.focusNode;
 
         const selectionEndElement = direction === "forward" ? selection.focusNode : selection.anchorNode;
+
+        const { top: selectionStartElementTop } = isElement(selectionStartElement) ? selectionStartElement.getBoundingClientRect() : selectionStartElement.parentNode.getBoundingClientRect();
 
         const { top: selectionEndElementTop, height: selectionEndElementHeight } = isElement(selectionEndElement) ? selectionEndElement.getBoundingClientRect() : selectionEndElement.parentNode.getBoundingClientRect();
    
@@ -109,8 +114,8 @@ const getUserSelection = () => {
 
 
 
-        if(selectionContainerBottom - selectionEndBottom > snapshotAllowExtendOffset && children.length > 2 &&  isExist(selection.focusNode) && isExist(selection.anchorNode)){
-            console.log( selectionContainer.children, selectionContainer);
+        if((selectionContainerBottom - selectionEndBottom > snapshotAllowExtendOffset || selectionStartElementTop - selectionContainerTop > snapshotAllowExtendOffset ) && children.length > 2 &&  isExist(selection.focusNode) && isExist(selection.anchorNode)){
+
             [...children].forEach((child, i) => { 
 
 
