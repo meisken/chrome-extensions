@@ -8,7 +8,7 @@ function injectCode(src , mountTarget) {
         const script = document.createElement('script');
         script.src = src;
         script.onload = function() {
-            console.log("script injected");
+
             // this.remove();
             resolve();
         };
