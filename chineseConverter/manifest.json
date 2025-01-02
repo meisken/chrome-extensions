@@ -4,7 +4,6 @@
     "description": "提供把已選擇部份截圖/繁簡轉換/速成碼轉換的功能,可在跳出視窗/右鍵選單中使用",
     "version": "3.1",
     "permissions": [
-        "scripting", 
         "activeTab",
         "contextMenus",
         "clipboardWrite",
