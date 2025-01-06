@@ -16,9 +16,9 @@
 
   ![1735566081392](readme_images/1735566081392.png)![1735566103604](readme_images/1735566101519.png)
 
-## Getting Started
+## 下載連結
 
-### 下載
+https://chromewebstore.google.com/detail/%E6%96%87%E5%AD%97%E8%BD%89%E6%8F%9B%E5%B7%A5%E5%85%B7/efdjngbfhfhmambhgcfbnmpggjgfalpg?authuser=5&hl=zh-TW
 
 ## Authors
 
