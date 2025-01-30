@@ -321,14 +321,14 @@ const registerCheckboxesListeners = () => {
 
 const convertType = {
     [contextMenuIds.zhToCn]: (mode, text, callback) => {      
-        sendMessageToContent({selectedText: text, mode, noCopy: true}, (result) => { 
-            callback(result);
-        });
+        const converter = OpenCC.Converter({ from: 'hk', to: 'cn' });
+        const result = converter(text);
+        callback(result);
     },
     [contextMenuIds.cnToZh]: (mode, text, callback) => {
-        sendMessageToContent({selectedText: text, mode, noCopy: true}, (result) => { 
-            callback(result);
-        });
+        const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
+        const result = converter(text);
+        callback(result);
     },
     [contextMenuIds.quickToZh]: (mode, text, callback) => {
         sendMessageToBackground("request-quick-conversion",{mode, text}).then((result) => {
