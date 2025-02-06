@@ -19,13 +19,22 @@ const contextMenuIds = {
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
     textToImage: "text-image",
+
+    imageToTextZh: "image-text-zh",
+    imageToTextCn: "image-text-cn",
+    imageToTextEn: "image-text-en",
 }
+
 const convertModeName = {
     [contextMenuIds.zhToCn]: "繁轉簡",
     [contextMenuIds.cnToZh]: "簡轉繁",
     [contextMenuIds.quickToZh]: "速成碼轉繁",
     [contextMenuIds.zhToQuick]: "繁轉速成碼",
     [contextMenuIds.textToImage]: "文字轉圖片",
+
+    [contextMenuIds.imageToTextZh]: "繁體 圖轉文字",
+    [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
+    [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
 }
 
 const outputModeNames = {
@@ -33,7 +42,12 @@ const outputModeNames = {
     [contextMenuIds.cnToZh]: "text-output-mode",
     [contextMenuIds.quickToZh]: "text-output-mode",
     [contextMenuIds.zhToQuick]: "quick-output-mode",
-    [contextMenuIds.textToImage]: "image-output-mode"
+    [contextMenuIds.textToImage]: "image-output-mode",
+
+
+    [contextMenuIds.imageToTextZh]: "text-output-mode",
+    [contextMenuIds.imageToTextCn]: "text-output-mode",
+    [contextMenuIds.imageToTextEn]: "text-output-mode",
 }
 const printError = (err) => {
     const errorMessageBox = document.querySelector("#error-message-box");
@@ -272,7 +286,8 @@ const registerCheckboxesListeners = () => {
                     
                     checkbox.addEventListener("change", async (e) => {
                         try{
-                            if(settingsSectionNames[key] === settingsSectionNames.convertMode){
+
+                            if(sectionName === settingsSectionNames.convertMode){
                                 const current = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.convertMode], "")
                                 await updateSettings(key,{
                                     current 
@@ -281,19 +296,13 @@ const registerCheckboxesListeners = () => {
                                     updateCovertModeInDom(current, convertModeName[current]);
                                 }
                          
-                            }
-                            if(settingsSectionNames[key] === settingsSectionNames.contextMenu){
-                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.contextMenu], "");
+                            }else{
+                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames[key]], "");
                                 await updateSettings(key,{
                                     [itemKey]: checkbox.checked
                                 })
                             }
-                            if(settingsSectionNames[key] === settingsSectionNames.imageConvertBehavior){
-                                const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.imageConvertBehavior], "");
-                                await updateSettings(key,{
-                                    [itemKey]: checkbox.checked
-                                })
-                            }
+               
                             
                             // if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
                             //     const itemKey = checkbox.id.replace(checkboxIdPrefixes[settingsSectionNames.rightClickBehavior], "");
@@ -538,7 +547,7 @@ const requestStoredSettings = () => {
 
 const updateCovertModeInDom = (mode, name) => {
     return new Promise((resolve, reject) => {
-
+        
         if(name === undefined || name === ""){
             reject("convert name does not exist")
             return
@@ -598,7 +607,6 @@ const initializeSettings =  () => {
                 }else{
                     reject("convertMode checkbox does not exist");
                 }
-
                 updateCovertModeInDom(convertMode.current, convertModeName[convertMode.current]);
             }else{
                 reject("convertMode is undefined");

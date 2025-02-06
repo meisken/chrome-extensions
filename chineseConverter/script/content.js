@@ -130,6 +130,19 @@ const convertType = {
         }
       
     },
+    [contextMenuIds.imageToText]: (selectedText, processedResult, callback) => {
+        const userSelection = window.getSelection();
+        const getImagesInSelection = (selection) => {
+            const range = selection.getRangeAt(0);
+            const fragment = range.cloneContents();
+            const imgs = fragment.querySelectorAll('img');
+            
+            return ([...imgs].map((img) => img.src))
+        }
+
+        console.log(getImagesInSelection(userSelection))
+    }
+ 
 }
 
 const hideElementClass = "hide-element";

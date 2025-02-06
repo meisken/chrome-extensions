@@ -4,8 +4,24 @@ const contextMenuIds = {
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
     textToImage: "text-image",
-    // saveImage: "save-image"
+
+    imageToTextZh: "image-text-zh",
+    imageToTextCn: "image-text-cn",
+    imageToTextEn: "image-text-en",
 }
+//type ContextType = "all" | "page" | "frame" | "selection" | "link" | "editable" | "image" | "video" | "audio" | "launcher" | "browser_action" | "page_action" | "action"
+const registerMode = {
+    [contextMenuIds.zhToCn]: "selection",
+    [contextMenuIds.cnToZh]: "selection",
+    [contextMenuIds.quickToZh]: "selection",
+    [contextMenuIds.zhToQuick]: "selection",
+    [contextMenuIds.textToImage]: "selection",
+
+    [contextMenuIds.imageToTextZh]: "image",
+    [contextMenuIds.imageToTextCn]: "image",
+    [contextMenuIds.imageToTextEn]: "image",
+}
+
 //may make customizable context menu name
 const settings = {
     convertMode: {
@@ -21,7 +37,11 @@ const settings = {
         [contextMenuIds.quickToZh]: true,
         [contextMenuIds.zhToQuick]: true,
         [contextMenuIds.textToImage]: true,
-        // [contextMenuIds.saveImage]: true,
+
+        [contextMenuIds.imageToTextZh]: true,
+        [contextMenuIds.imageToTextCn]: true,
+        [contextMenuIds.imageToTextEn]: true,
+
     },
     contextMenuName: {
         [contextMenuIds.zhToCn]: "繁轉簡",
@@ -29,6 +49,10 @@ const settings = {
         [contextMenuIds.quickToZh]: "速成碼轉繁",
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
         [contextMenuIds.textToImage]: "已選部份截圖",
+
+        [contextMenuIds.imageToTextZh]: "繁體 圖轉文字",
+        [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
+        [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
     },
     reminder: {
         enabled: true
@@ -54,7 +78,17 @@ const rightClickActions = {
     },
     [contextMenuIds.textToImage]: (_, selectedText) => {
        //process on content.js
-    }   
+    },   
+
+    [contextMenuIds.imageToTextZh]: (_, selectedText) => {
+        //process on content.js
+    },
+    [contextMenuIds.imageToTextCn]: (_, selectedText) => {
+        //process on content.js
+    },
+    [contextMenuIds.imageToTextEn]: (_, selectedText) => {
+        //process on content.js
+    }       
 }
 const requestTypes = {
     "request-stored-settings": (props) => {
@@ -92,13 +126,12 @@ const sendData = (props, callback) => {
     })
 
 }
-const  rightClickMenuOnClickHandler = (data) => {
+const rightClickMenuOnClickHandler = (data) => {
 
     const mode =  data.menuItemId;
     const selectedText = data.selectionText;
     let processedResult;
-
-
+    console.log(data)
     if(rightClickActions[mode]){
         processedResult = rightClickActions[mode](mode,selectedText)
 
@@ -120,7 +153,7 @@ const registerContextMenus = () => {
                 chrome.contextMenus.create({
                     id: contextMenuIds[key],
                     title: settings.contextMenuName[contextMenuIds[key]],
-                    contexts:["selection"], 
+                    contexts:[ registerMode[contextMenuIds[key]] ], 
                 }); 
             }
      
@@ -210,8 +243,6 @@ const main = async () => {
     registerContextMenus();
     chrome.contextMenus.onClicked.addListener(rightClickMenuOnClickHandler);
     chrome.runtime.onMessage.addListener(onReceiveMessageHandler);
-
-
 }
 main();
 let qdict = [

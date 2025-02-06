@@ -4,8 +4,12 @@ const contextMenuIds = {
     quickToZh: "quick-zh",
     zhToQuick: "zh-quick",
     textToImage: "text-image",
-    saveImage: "save-image"
+
+    imageToTextZh: "image-text-zh",
+    imageToTextCn: "image-text-cn",
+    imageToTextEn: "image-text-en",
 }
+
 const requestStoredSettings = () => {
     return new Promise(async (resolve, reject) => {
         try{
