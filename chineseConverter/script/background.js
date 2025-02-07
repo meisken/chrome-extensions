@@ -130,8 +130,9 @@ const rightClickMenuOnClickHandler = (data) => {
 
     const mode =  data.menuItemId;
     const selectedText = data.selectionText;
+    const imageSrc = data.srcUrl;
+
     let processedResult;
-    console.log(data)
     if(rightClickActions[mode]){
         processedResult = rightClickActions[mode](mode,selectedText)
 
@@ -140,7 +141,8 @@ const rightClickMenuOnClickHandler = (data) => {
     sendData({
         mode,
         selectedText,
-        processedResult
+        processedResult,
+        imageSrc: registerMode[mode] === "image" ?  imageSrc : undefined
     })
      
 };
