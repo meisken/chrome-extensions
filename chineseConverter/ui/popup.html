@@ -24,15 +24,39 @@
                 </header>
                 <main>
 
-                    <section class="search-section">
-                        <div class="search-bar">
-                            <div class="search-icon">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17.5 17.5L13.1694 13.1694M13.1694 13.1694C14.3004 12.0384 15 10.4759 15 8.75C15 5.29822 12.2018 2.5 8.75 2.5C5.29822 2.5 2.5 5.29822 2.5 8.75C2.5 12.2018 5.29822 15 8.75 15C10.4759 15 12.0384 14.3004 13.1694 13.1694Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                    
+                    <section class="search-section" data-input-mode="text">
+                        <div class="search-bar" >
+                     
+                            <div class="text-input-mode input-mode">
+                                <label for="search-input">
+                                    <div class="search-icon">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M17.5 17.5L13.1694 13.1694M13.1694 13.1694C14.3004 12.0384 15 10.4759 15 8.75C15 5.29822 12.2018 2.5 8.75 2.5C5.29822 2.5 2.5 5.29822 2.5 8.75C2.5 12.2018 5.29822 15 8.75 15C10.4759 15 12.0384 14.3004 13.1694 13.1694Z" stroke="currentcolor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                            
+                                    </div>
+                                </label>
+                                <input id="search-input" class="body-regular-dark-font" type="text" placeholder="繁轉簡">
                             </div>
-                            <input id="search-input" class="body-regular-dark-font" type="text" placeholder="繁轉簡">
+                            
+                            <div class="file-input-mode input-mode">
+                                <label for="image-search-input">
+                                    <div class="search-icon">
+                                        <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.50503 0.188288C6.77839 -0.0627629 7.22161 -0.0627628 7.49498 0.188289L10.295 2.75972C10.5683 3.01077 10.5683 3.4178 10.295 3.66886C10.0216 3.91991 9.57839 3.91991 9.30503 3.66885L7.7 2.19485L7.7 11.5714C7.7 11.9265 7.3866 12.2143 7 12.2143C6.6134 12.2143 6.3 11.9265 6.3 11.5714L6.3 2.19485L4.69497 3.66885C4.42161 3.91991 3.97839 3.91991 3.70503 3.66885C3.43166 3.4178 3.43166 3.01077 3.70503 2.75972L6.50503 0.188288ZM2.8 6.42857C2.0268 6.42857 1.4 7.00421 1.4 7.71429V15.4286C1.4 16.1387 2.0268 16.7143 2.8 16.7143H11.2C11.9732 16.7143 12.6 16.1387 12.6 15.4286V7.71429C12.6 7.00421 11.9732 6.42857 11.2 6.42857H9.8C9.4134 6.42857 9.1 6.14075 9.1 5.78571C9.1 5.43067 9.4134 5.14286 9.8 5.14286H11.2C12.7464 5.14286 14 6.29413 14 7.71429V15.4286C14 16.8487 12.7464 18 11.2 18H2.8C1.2536 18 0 16.8487 0 15.4286V7.71429C0 6.29413 1.2536 5.14286 2.8 5.14286H4.2C4.5866 5.14286 4.9 5.43067 4.9 5.78571C4.9 6.14075 4.5866 6.42857 4.2 6.42857H2.8Z" fill="currentColor"/>
+                                        </svg>
+                                            
+                                          
+                                            
+                                    </div>
+                                    <div class="placeholder body-regular-dark-font"></div>
+                                </label>
+                         
+                                
+                                <input id="image-search-input" style="display: none;" accept="image/png, image/jpeg" type="file">
+                            </div>
+                      
+    
                             <div id="cross-button" class="cross-button">
                                 <img src="images/icons/cross.svg" alt="">
                             </div>
@@ -63,7 +87,9 @@
                                 <span class="body-regular-font">轉換模式</span>
                                 <div class="detail">
                                     <span class="body-regular-dark-font">繁轉簡</span>
-                                    <img src="images/icons/chevron.right.svg" />
+                                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.16434 6.99658C7.16434 6.71603 7.0617 6.48337 6.84273 6.26441L1.57383 1.11183C1.39592 0.933919 1.18379 0.851807 0.930611 0.851807C0.417407 0.851807 -1.1643e-09 1.25553 -2.64435e-09 1.76873C-3.3745e-09 2.02191 0.109484 2.25457 0.294237 2.43932L4.97466 6.98974L0.294237 11.5538C0.109484 11.7386 -3.20479e-08 11.9644 -3.27978e-08 12.2244C-3.42778e-08 12.7376 0.417406 13.1482 0.930611 13.1482C1.18379 13.1482 1.39592 13.0592 1.57383 12.8813L6.84273 7.72875C7.06854 7.50978 7.16434 7.27713 7.16434 6.99658Z" fill="currentcolor"/>
+                                    </svg>
                                 </div>
                             </div>
                     
@@ -77,7 +103,10 @@
                                 <span class="body-regular-font">右鍵選單</span>
                                 <div class="detail">
                                     <span class="body-regular-dark-font">設定</span>
-                                    <img src="images/icons/chevron.right.svg" />
+                                    
+                                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.16434 6.99658C7.16434 6.71603 7.0617 6.48337 6.84273 6.26441L1.57383 1.11183C1.39592 0.933919 1.18379 0.851807 0.930611 0.851807C0.417407 0.851807 -1.1643e-09 1.25553 -2.64435e-09 1.76873C-3.3745e-09 2.02191 0.109484 2.25457 0.294237 2.43932L4.97466 6.98974L0.294237 11.5538C0.109484 11.7386 -3.20479e-08 11.9644 -3.27978e-08 12.2244C-3.42778e-08 12.7376 0.417406 13.1482 0.930611 13.1482C1.18379 13.1482 1.39592 13.0592 1.57383 12.8813L6.84273 7.72875C7.06854 7.50978 7.16434 7.27713 7.16434 6.99658Z" fill="currentcolor"/>
+                                    </svg>
                                 </div>
                             </div>
                         
@@ -130,7 +159,10 @@
                                 <span class="body-regular-font english-font">Help | Change Log</span>
                                 <div class="detail">
                                     <span class="body-regular-dark-font english-font">Github</span>
-                                    <img src="images/icons/chevron.right.svg" />
+                                    <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M7.16434 6.99658C7.16434 6.71603 7.0617 6.48337 6.84273 6.26441L1.57383 1.11183C1.39592 0.933919 1.18379 0.851807 0.930611 0.851807C0.417407 0.851807 -1.1643e-09 1.25553 -2.64435e-09 1.76873C-3.3745e-09 2.02191 0.109484 2.25457 0.294237 2.43932L4.97466 6.98974L0.294237 11.5538C0.109484 11.7386 -3.20479e-08 11.9644 -3.27978e-08 12.2244C-3.42778e-08 12.7376 0.417406 13.1482 0.930611 13.1482C1.18379 13.1482 1.39592 13.0592 1.57383 12.8813L6.84273 7.72875C7.06854 7.50978 7.16434 7.27713 7.16434 6.99658Z" fill="currentcolor"/>
+                                    </svg>
+                                        
                                 </div>
                             </div>
                 

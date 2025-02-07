@@ -36,7 +36,18 @@ const convertModeName = {
     [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
     [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
 }
+const inputModes = {
+    [contextMenuIds.zhToCn]: "text",
+    [contextMenuIds.cnToZh]: "text",
+    [contextMenuIds.quickToZh]: "text",
+    [contextMenuIds.zhToQuick]: "text",
+    [contextMenuIds.textToImage]: "text",
 
+
+    [contextMenuIds.imageToTextZh]: "file",
+    [contextMenuIds.imageToTextCn]: "file",
+    [contextMenuIds.imageToTextEn]: "file",
+}
 const outputModeNames = {
     [contextMenuIds.zhToCn]: "text-output-mode",
     [contextMenuIds.cnToZh]: "text-output-mode",
@@ -567,13 +578,20 @@ const updateCovertModeInDom = (mode, name) => {
             reject("convertMode checkbox does not exist");
         };
 
+        const searchSection = document.querySelector(".search-section");
+        if(mode !== undefined && inputModes[mode] && searchSection){
+            searchSection.setAttribute("data-input-mode", inputModes[mode]);
+        }else{
+            reject("searchSection or convert mode does not exist");
+        }
+
         const outputContainer = document.querySelector(".output-box");
 
         if(mode !== undefined && outputModeNames[mode] && outputContainer){
        
             outputContainer.setAttribute("data-output-mode", outputModeNames[mode]);
         }else{
-            reject("output Container  or convert mode does not exist");
+            reject("output Container or convert mode does not exist");
         }
 
         resolve();
