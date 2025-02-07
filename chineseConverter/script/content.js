@@ -41,15 +41,40 @@ const isString = (variable) => {
 const isExist = (element) => {
     return element !== null && element !== undefined
 }
+const imageToText = (language, src, removeSpace) => {
+    const removeSpaceAfterWords = (str) => {
+        return str.replace(/(?<=\p{Script=Han})(?=[^\n])\s/gmu,"")
+    } 
+    const removeEmptyLine = (str) => {
+        return str.replace(/(^(\r\n|\n|\r)$)|(^(\r\n|\n|\r))|^\s*$/gm,"")
+    }
+    return new Promise(async (resolve, reject) => {
+        try{
+            //.replace(/(?<=\p{Script=Han})(?=[^\n])\s/gmu,"")
+            const { createWorker } = Tesseract;
+            const worker = await createWorker(language);
+            const { data } = await worker.recognize(src);
+            await worker.terminate();
+            resolve(
+                removeEmptyLine(
+                    removeSpace ? removeSpaceAfterWords(data.text) : data.text
+                )
+            );
+
+        }catch(err){
+            reject(err)
+        }
+    })
+}
 const convertType = {
-    [contextMenuIds.zhToCn]: (selectedText, processedResult, callback) => {
+    [contextMenuIds.zhToCn]: ({selectedText, processedResult}, callback) => {
 
         const converter = OpenCC.Converter({ from: 'hk', to: 'cn' });
         const result = converter(selectedText);
         callback(result)
         
     },
-    [contextMenuIds.cnToZh]: (selectedText, processedResult, callback) => {
+    [contextMenuIds.cnToZh]: ({selectedText, processedResult}, callback) => {
 
         const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
         const result = converter(selectedText);
@@ -57,11 +82,11 @@ const convertType = {
 
 
     },
-    [contextMenuIds.quickToZh]: (selectedText, processedResult, callback) => {
+    [contextMenuIds.quickToZh]: ({selectedText, processedResult}, callback) => {
         callback(processedResult)
       
     },
-    [contextMenuIds.zhToQuick]: (selectedText, processedResult, callback) => {
+    [contextMenuIds.zhToQuick]: ({selectedText, processedResult}, callback) => {
         const characterArray = processedResult;
      
         if(characterArray.length > 0){
@@ -83,7 +108,7 @@ const convertType = {
         }
          
     },
-    [contextMenuIds.textToImage]: (selectedText, processedResult, callback) => {
+    [contextMenuIds.textToImage]: ({selectedText, processedResult}, callback) => {
         if(true){
             // const testingElement = document.querySelector("#Panes");
             try{
@@ -130,17 +155,32 @@ const convertType = {
         }
       
     },
-    [contextMenuIds.imageToText]: (selectedText, processedResult, callback) => {
-        const userSelection = window.getSelection();
-        const getImagesInSelection = (selection) => {
-            const range = selection.getRangeAt(0);
-            const fragment = range.cloneContents();
-            const imgs = fragment.querySelectorAll('img');
+    [contextMenuIds.imageToTextZh]: ({selectedText, processedResult, imageSrc}, callback) => {
+        imageToText('chi_tra', imageSrc, true).then((text) => {
+            callback(text)
+        })
+        // const userSelection = window.getSelection();
+        // const getImagesInSelection = (selection) => {
+        //     const range = selection.getRangeAt(0);
+        //     const fragment = range.cloneContents();
+        //     const imgs = fragment.querySelectorAll('img');
             
-            return ([...imgs].map((img) => img.src))
-        }
+        //     return ([...imgs].map((img) => img.src))
+        // }
 
-        console.log(getImagesInSelection(userSelection))
+        // console.log(getImagesInSelection(userSelection))
+    },
+    [contextMenuIds.imageToTextCn]: ({selectedText, processedResult, imageSrc}, callback) => {
+        imageToText('chi_sim', imageSrc, true).then((text) => {
+            callback(text)
+        })
+
+    },
+    [contextMenuIds.imageToTextEn]: ({selectedText, processedResult, imageSrc}, callback) => {
+        imageToText('eng', imageSrc, false).then((text) => {
+            callback(text)
+        })
+
     }
  
 }
@@ -232,18 +272,18 @@ const main = () => {
     chrome.runtime.onMessage.addListener( 
         function(request, sender, sendResponse) {
    
-           const {
-               mode, 
-               selectedText,  
-               processedResult,
-               noCopy = false
-           } = request;
-   
-           if(convertType[mode]){
-               convertType[mode](selectedText, processedResult, (result => {
-   
-                   if(result && !noCopy){
-                  
+            const {
+                mode, 
+                selectedText,  
+                processedResult,
+                imageSrc 
+
+            } = request;
+            if(convertType[mode]){
+                convertType[mode]({selectedText, processedResult, imageSrc}, (result => {
+           
+                    if(result){
+                    
                    
                         if(mode === contextMenuIds.textToImage){
                             const imageUrl = result;
@@ -286,11 +326,11 @@ const main = () => {
                         }
                         
               
-                   }
-                   sendResponse(result);
+                    }
+                    sendResponse(result);
                    
-               }))
-           }   
+                }))
+            }   
       
                
        }
