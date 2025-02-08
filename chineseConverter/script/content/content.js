@@ -50,7 +50,6 @@ const imageToText = (language, src, removeSpace) => {
     }
     return new Promise(async (resolve, reject) => {
         try{
-            //.replace(/(?<=\p{Script=Han})(?=[^\n])\s/gmu,"")
             const { createWorker } = Tesseract;
             const worker = await createWorker(language);
             const { data } = await worker.recognize(src);
@@ -157,29 +156,18 @@ const convertType = {
     },
     [contextMenuIds.imageToTextZh]: ({selectedText, processedResult, imageSrc}, callback) => {
         imageToText('chi_tra', imageSrc, true).then((text) => {
-            callback(text)
-        })
-        // const userSelection = window.getSelection();
-        // const getImagesInSelection = (selection) => {
-        //     const range = selection.getRangeAt(0);
-        //     const fragment = range.cloneContents();
-        //     const imgs = fragment.querySelectorAll('img');
-            
-        //     return ([...imgs].map((img) => img.src))
-        // }
-
-        // console.log(getImagesInSelection(userSelection))
+            callback(text);
+        }).catch(err => showReminder(err, "error"));
     },
     [contextMenuIds.imageToTextCn]: ({selectedText, processedResult, imageSrc}, callback) => {
         imageToText('chi_sim', imageSrc, true).then((text) => {
-            callback(text)
-        })
-
+            callback(text);
+        }).catch(err => showReminder(err, "error"));
     },
     [contextMenuIds.imageToTextEn]: ({selectedText, processedResult, imageSrc}, callback) => {
         imageToText('eng', imageSrc, false).then((text) => {
-            callback(text)
-        })
+            callback(text);
+        }).catch(err => showReminder(err, "error"));
 
     }
  
