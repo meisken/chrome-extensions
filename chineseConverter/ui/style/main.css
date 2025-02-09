@@ -375,7 +375,8 @@ body.lightmode{
     overflow-y: auto;
     position: relative;
     padding-bottom: 40px;
-
+    
+    white-space: pre-wrap;
 }
 
 
