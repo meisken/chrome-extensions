@@ -295,12 +295,13 @@ body.lightmode{
     position: relative;
     width: 100%;
     height: 100%;
-
+    color: var(--text);
 }
 .search-section .file-input-mode .placeholder:empty::after{
     content: "按此處上傳";
     position: absolute;
     inset: 0;
+    color: var(--secondary-text);
 
 }
 .search-section .cross-button{
