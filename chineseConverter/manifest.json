@@ -29,10 +29,13 @@
     },
     "web_accessible_resources": [
         {
-          "resources": [ "script/html2canvas.min.js", "script/content/textToImage.js" ],
-          "matches": [ "https://*/*" ]
+          "resources": [ "script/lib/html2canvas.min.js", "script/content/textToImage.js", "script/lib/tesseract-core-simd-lstm.wasm.js", "script/lib/worker.min.js", "script/lib/lang/*.traineddata"  ],
+          "matches": [ "https://*/*", "http://*/*" ]
         }
-    ]
+    ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+    }
 
 }
 
