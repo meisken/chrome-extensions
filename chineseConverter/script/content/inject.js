@@ -30,6 +30,7 @@ function injectCode(src , mountTarget) {
 const injectMain = async () => {
     try{
         const settings = await requestStoredSettings();
+        await injectCode(chrome.runtime.getURL('script/content/createElement.js'), "head");
         if(settings !== undefined && settings.contextMenu[contextMenuIds.textToImage]){
             await injectCode(chrome.runtime.getURL('script/lib/html2canvas.min.js'), "head");
             await injectCode(chrome.runtime.getURL('script/content/textToImage.js'), "body");

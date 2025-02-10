@@ -1,6 +1,6 @@
 
 
-
+const textToImageConverterElementId = "text-image-converter";
 
 const getUserSelection = () => {
     const selection = window.getSelection();
@@ -232,79 +232,109 @@ const convertSelectionToImage = (callback) => {
 
         // resolve({imageUrl, restoreToOrigin});
 
-    }).catch((err) => {setStatus("error",err)});
+    }).catch((err) => {setConverterStatus(textToImageConverterElementId,"error",err)});
 
 
 }
 
+createConverterStatusElements(textToImageConverterElementId, ({
+    statusIndicator,
+    convertButton,
+    outputImage,
+    outputText,
+    isCopiedIndicator,
+}) => {
+    try{
+        outputImage.src = "";
+        convertSelectionToImage(({imageUrl, restoreElements}) => {
+            outputImage.src = imageUrl;
+            setConverterStatus(textToImageConverterElementId,"done", "");
+   
+            const onCopied = () => {
+                restoreElements();
+                isCopiedIndicator.removeEventListener("click",onCopied)
+            }
 
-const setStatus = (status, message) => {
-    const statusIndicator = document.querySelector("#converter-status-indicator");
-    if(statusIndicator){
-        if(typeof message !== "string"){
-            message = message.toString()
-        }
-        statusIndicator.setAttribute("data-status",status);
-        statusIndicator.setAttribute("data-message",message);
-    }else{
-        console.error("statusIndicator does not exist")
-    }
+            isCopiedIndicator.addEventListener("click",onCopied)
+            statusIndicator.click();
 
-}
+        });
 
-const createElements = () => {
-  
-    const container = document.createElement("div");
-    container.style.display = "none";
-    container.id = "convert-control-panel";
-
-    const statusIndicator = document.createElement("button");
-    statusIndicator.id = "converter-status-indicator";
-    //content js will add a click listener to confirm the convert is done, and the text is the status
-
-
-    const convertButton = document.createElement("button");
-    convertButton.id = "converter-convert-button";
-
-    const outputImage = document.createElement("img");
-    outputImage.id = "converter-image-output";
-
-    const isCopiedIndicator = document.createElement("button");;
-    isCopiedIndicator.id = "converter-is-copied-indicator";
-    //it will be added a click listener after hide some element, then reveal those elements back on click (copied)
     
-    container.appendChild(statusIndicator);
-    container.appendChild(convertButton);
-    container.appendChild(outputImage);
-    container.appendChild(isCopiedIndicator);
+    }catch(err){
+        setConverterStatus(textToImageConverterElementId,"error",err);
+        statusIndicator.click();
+    }
+ 
+});
 
-    convertButton.addEventListener("click",() => {
-        try{
+// const setStatus = (status, message) => {
+//     const statusIndicator = document.querySelector("#converter-status-indicator");
+//     if(statusIndicator){
+//         if(typeof message !== "string"){
+//             message = message.toString()
+//         }
+//         statusIndicator.setAttribute("data-status",status);
+//         statusIndicator.setAttribute("data-message",message);
+//     }else{
+//         console.error("statusIndicator does not exist")
+//     }
 
-            convertSelectionToImage(({imageUrl, restoreElements}) => {
-                outputImage.src = imageUrl;
-                setStatus("done", "");
+// }
+
+// const createElements = () => {
+  
+//     const container = document.createElement("div");
+//     container.style.display = "none";
+//     container.id = "convert-control-panel";
+
+//     const statusIndicator = document.createElement("button");
+//     statusIndicator.id = "converter-status-indicator";
+//     //content js will add a click listener to confirm the convert is done, and the text is the status
+
+
+//     const convertButton = document.createElement("button");
+//     convertButton.id = "converter-convert-button";
+
+//     const outputImage = document.createElement("img");
+//     outputImage.id = "converter-image-output";
+
+//     const isCopiedIndicator = document.createElement("button");;
+//     isCopiedIndicator.id = "converter-is-copied-indicator";
+//     //it will be added a click listener after hide some element, then reveal those elements back on click (copied)
+    
+//     container.appendChild(statusIndicator);
+//     container.appendChild(convertButton);
+//     container.appendChild(outputImage);
+//     container.appendChild(isCopiedIndicator);
+
+//     convertButton.addEventListener("click",() => {
+//         try{
+
+//             convertSelectionToImage(({imageUrl, restoreElements}) => {
+//                 outputImage.src = imageUrl;
+//                 setStatus("done", "");
        
-                const onCopied = () => {
-                    restoreElements();
-                    isCopiedIndicator.removeEventListener("click",onCopied)
-                }
+//                 const onCopied = () => {
+//                     restoreElements();
+//                     isCopiedIndicator.removeEventListener("click",onCopied)
+//                 }
 
-                isCopiedIndicator.addEventListener("click",onCopied)
-                statusIndicator.click();
+//                 isCopiedIndicator.addEventListener("click",onCopied)
+//                 statusIndicator.click();
 
-            });
+//             });
 
         
-        }catch(err){
-            setStatus("error",err);
-            statusIndicator.click();
-        }
+//         }catch(err){
+//             setStatus("error",err);
+//             statusIndicator.click();
+//         }
      
-    })
+//     })
 
-    document.body.appendChild(container);
-    setStatus("","");
-}
+//     document.body.appendChild(container);
+//     setStatus("","");
+// }
 
-createElements();
+// createElements();
