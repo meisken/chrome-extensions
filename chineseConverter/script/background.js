@@ -10,13 +10,13 @@ const contextMenuIds = {
 }
 //type ContextType = "all" | "page" | "frame" | "selection" | "link" | "editable" | "image" | "video" | "audio" | "launcher" | "browser_action" | "page_action" | "action"
 const registerMode = {
-    [contextMenuIds.zhToCn]: "selection",
-    [contextMenuIds.cnToZh]: "selection",
-    [contextMenuIds.quickToZh]: "selection",
-    [contextMenuIds.zhToQuick]: "selection",
-    [contextMenuIds.textToImage]: "selection",
+    [contextMenuIds.zhToCn]: ["selection"],
+    [contextMenuIds.cnToZh]: ["selection"],
+    [contextMenuIds.quickToZh]: ["selection"],
+    [contextMenuIds.zhToQuick]: ["selection"],
+    [contextMenuIds.textToImage]: ["selection"],
 
-    [contextMenuIds.imageToText]: "image",
+    [contextMenuIds.imageToText]: ["image", "selection"],
 
 }
 
@@ -145,7 +145,7 @@ const registerContextMenus = () => {
                 chrome.contextMenus.create({
                     id: contextMenuIds[key],
                     title: settings.contextMenuName[contextMenuIds[key]],
-                    contexts:[ registerMode[contextMenuIds[key]] ], 
+                    contexts:[ ...registerMode[contextMenuIds[key]] ], 
                 }); 
             }
      
