@@ -50,20 +50,64 @@ const imageToText = (language, src, removeSpace) => {
     }
     return new Promise(async (resolve, reject) => {
         try{
-            const { createWorker } = Tesseract;
-            const worker = await createWorker(language);
-            const { data } = await worker.recognize(src);
-            await worker.terminate();
-            resolve(
-                removeEmptyLine(
-                    removeSpace ? removeSpaceAfterWords(data.text) : data.text
-                )
-            );
+            if(src !== undefined){
+                const { createWorker } = Tesseract;
+                const worker = await createWorker(language);
+                const { data } = await worker.recognize(src);
+                await worker.terminate();
+                resolve(
+                    removeEmptyLine(
+                        removeSpace ? removeSpaceAfterWords(data.text) : data.text
+                    )
+                );
+            }else{
+                reject(`image src does not exist ${src}`)
+            }
+
 
         }catch(err){
             reject(err)
         }
     })
+}
+const imageToTextHandler = ({selectedText, processedResult, imageSrc, language}, callback) => {
+    const selection = window.getSelection();
+    const srcList = [];
+    let result = "";
+
+    if(selection.isCollapsed){
+        srcList.push(imageSrc)
+    }else{
+        const range = document.getSelection().getRangeAt(0);
+        const fragment = range.cloneContents();
+        const imgs = fragment.querySelectorAll('img');
+        [...imgs].forEach(img => {
+            srcList.push(img.src)
+        })
+    }
+
+    const asyncWrapper = async () => {
+        try{
+            showReminder("正在開始識別 可能需要一些時間完成");
+            for(const src of srcList){
+                console.log(src)
+                const text = await imageToText(language, src, true);
+                result += `${text}${srcList.length > 1 ? '\n' : ""}`
+            }
+
+            callback(result);
+        }catch(err){
+            showReminder(err, "error")
+        }
+        
+    }
+    if(srcList.length > 0){
+   
+        asyncWrapper();
+    }else{
+        showReminder("沒有找到任何圖片", "error")
+    }
+  
 }
 const convertType = {
     [contextMenuIds.zhToCn]: ({selectedText, processedResult}, callback) => {
@@ -154,47 +198,21 @@ const convertType = {
         }
       
     },
-    [contextMenuIds.imageToText]: ({selectedText, processedResult, imageSrc}, callback) => {
+    [contextMenuIds.imageToTextZh]: ({selectedText, processedResult, imageSrc}, callback) => {
         
-        const selection = window.getSelection();
-        const srcList = [];
-        let result = "";
-
-        if(selection.isCollapsed){
-            srcList.push(imageSrc)
-        }else{
-            const range = document.getSelection().getRangeAt(0);
-            const fragment = range.cloneContents();
-            const imgs = fragment.querySelectorAll('img');
-            [...imgs].forEach(img => {
-                srcList.push(img.src)
-            })
-        }
-
-        const asyncWrapper = async () => {
-            try{
-                showReminder("正在開始識別 可能需要一些時間完成");
-                for(const src of srcList){
-                    const text = await imageToText(['chi_tra','eng','chi_sim'], src, true);
-                    result += `${text}${srcList.length > 1 ? '\n' : ""}`
-                }
-
-                callback(result);
-            }catch(err){
-                showReminder(err, "error")
-            }
-            
-        }
-        if(srcList.length > 0){
-       
-            asyncWrapper();
-        }else{
-            showReminder("沒有找到任何圖片", "error")
-        }
-      
+        imageToTextHandler({selectedText, processedResult, imageSrc, language: 'chi_tra'}, callback)
     
     },
-
+    [contextMenuIds.imageToTextCn]: ({selectedText, processedResult, imageSrc}, callback) => {
+        
+        imageToTextHandler({selectedText, processedResult, imageSrc, language: 'chi_sim'}, callback)
+    
+    },
+    [contextMenuIds.imageToTextEn]: ({selectedText, processedResult, imageSrc}, callback) => {
+        
+        imageToTextHandler({selectedText, processedResult, imageSrc, language: 'eng'}, callback)
+    
+    },
  
 }
 

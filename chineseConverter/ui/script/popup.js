@@ -20,7 +20,9 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 
-    imageToText: "image-text",
+    imageToTextZh: "image-text-zh",
+    imageToTextCn: "image-text-cn",
+    imageToTextEn: "image-text-en",
 
 }
 
@@ -31,7 +33,9 @@ const convertModeName = {
     [contextMenuIds.zhToQuick]: "繁轉速成碼",
     [contextMenuIds.textToImage]: "文字轉圖片",
 
-    [contextMenuIds.imageToText]: "圖片轉文字",
+    [contextMenuIds.imageToTextZh]: "繁體 圖轉文字",
+    [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
+    [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
 
 }
 const inputModes = {
@@ -41,8 +45,9 @@ const inputModes = {
     [contextMenuIds.zhToQuick]: "text",
     [contextMenuIds.textToImage]: "text",
 
-
-    [contextMenuIds.imageToText]: "file",
+    [contextMenuIds.imageToTextZh]: "file",
+    [contextMenuIds.imageToTextCn]: "file",
+    [contextMenuIds.imageToTextEn]: "file",
 
 }
 const outputModeNames = {
@@ -52,8 +57,9 @@ const outputModeNames = {
     [contextMenuIds.zhToQuick]: "quick-output-mode",
     [contextMenuIds.textToImage]: "image-output-mode",
 
-
-    [contextMenuIds.imageToText]: "text-output-mode",
+    [contextMenuIds.imageToTextZh]: "text-output-mode",
+    [contextMenuIds.imageToTextCn]: "text-output-mode",
+    [contextMenuIds.imageToTextEn]: "text-output-mode",
 
 }
 const printError = (err) => {
@@ -307,6 +313,7 @@ const registerCheckboxesListeners = () => {
                                 });
                                 if(storedSettings){
                                     updateCovertModeInDom(current, convertModeName[current]);
+                          
                                 }
                          
                             }else{
@@ -315,6 +322,8 @@ const registerCheckboxesListeners = () => {
                                     [itemKey]: checkbox.checked
                                 })
                             }
+                            clearInput();
+                            clearOutput();
                
                             
                             // if(settingsSectionNames[key] === settingsSectionNames.rightClickBehavior){
@@ -355,13 +364,18 @@ const imageToText = (language, src, removeSpace) => {
                 langPath: chrome.runtime.getURL("script/lib/lang/"),
                 workerBlobURL: false,
             });
-            const { data } = await worker.recognize(src);
-            await worker.terminate();
-            resolve(
-                removeEmptyLine(
-                    removeSpace ? removeSpaceAfterWords(data.text) : data.text
-                )
-            );
+            if(src !== undefined){
+                const { data } = await worker.recognize(src);
+                await worker.terminate();
+                resolve(
+                    removeEmptyLine(
+                        removeSpace ? removeSpaceAfterWords(data.text) : data.text
+                    )
+                );
+            }else{
+                reject(`image src does not exist ${src}`)
+            }
+      
 
         }catch(err){
             reject(err)
@@ -431,12 +445,21 @@ const convertType = {
 
 
     },
-    [contextMenuIds.imageToText]: (mode, url, callback) => {
-        imageToText(['chi_tra','eng','chi_sim'], url, true).then((text) => {
+    [contextMenuIds.imageToTextZh]: (mode, url, callback) => {
+        imageToText('chi_tra', url, true).then((text) => {
             callback(text)
         }).catch(printError)
     },
-
+    [contextMenuIds.imageToTextCn]: (mode, url, callback) => {
+        imageToText('chi_sim', url, true).then((text) => {
+            callback(text)
+        }).catch(printError)
+    },
+    [contextMenuIds.imageToTextEn]: (mode, url, callback) => {
+        imageToText('eng', url, true).then((text) => {
+            callback(text)
+        }).catch(printError)
+    },
 }
 
 const registerSearchInputOnChangeListener = () => {
@@ -643,14 +666,14 @@ const updateCovertModeInDom = (mode, name) => {
         if(textConvertInput){
             textConvertInput.placeholder = name;
         }else{
-            reject("convertMode checkbox does not exist");
+            reject("textConvertInput does not exist");
         };
     
         const currentConvertModeText = document.querySelector(".convert-mode .title .detail span");
         if(currentConvertModeText){
             currentConvertModeText.textContent = name;
         }else{
-            reject("convertMode checkbox does not exist");
+            reject("currentConvertModeText does not exist");
         };
 
         const searchSection = document.querySelector(".search-section");
@@ -693,7 +716,6 @@ const initializeSettings =  () => {
 
             if(convertMode !== undefined){
 
-                
                 const checkbox = document.querySelector(`label[for=${checkboxIdPrefixes[settingsSectionNames.convertMode]}${convertMode.current}] input[type="checkbox"]`)
                 if(checkbox){
                     checkbox.checked = true;

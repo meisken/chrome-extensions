@@ -5,7 +5,9 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 
-    imageToText: "image-text",
+    imageToTextZh: "image-text-zh",
+    imageToTextCn: "image-text-cn",
+    imageToTextEn: "image-text-en",
 
 }
 
