@@ -6,7 +6,7 @@ const getUserSelection = () => {
     const selection = window.getSelection();
 
     if(selection.isCollapsed){
-        throw new Error("no selection found");
+        throw new Error("沒有所選文字");
     }
 
 

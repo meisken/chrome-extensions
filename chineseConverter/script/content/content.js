@@ -111,14 +111,21 @@ const imageToTextHandler = ({selectedText, processedResult, imageSrc, language},
 }
 const convertType = {
     [contextMenuIds.zhToCn]: ({selectedText, processedResult}, callback) => {
-
+    
+        if(selectedText === undefined ||selectedText === ""){
+            showReminder("沒有所選文字", "error");
+            return
+        }
         const converter = OpenCC.Converter({ from: 'hk', to: 'cn' });
         const result = converter(selectedText);
         callback(result)
         
     },
     [contextMenuIds.cnToZh]: ({selectedText, processedResult}, callback) => {
-
+        if(selectedText === undefined ||selectedText === ""){
+            showReminder("沒有所選文字", "error");
+            return
+        }
         const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
         const result = converter(selectedText);
         callback(result)
