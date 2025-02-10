@@ -74,17 +74,22 @@ const imageToTextHandler = ({selectedText, processedResult, imageSrc, language},
     const selection = window.getSelection();
     const srcList = [];
     let result = "";
-
-    if(selection.isCollapsed){
-        srcList.push(imageSrc)
-    }else{
+    if(!selection.isCollapsed){
         const range = document.getSelection().getRangeAt(0);
         const fragment = range.cloneContents();
         const imgs = fragment.querySelectorAll('img');
-        [...imgs].forEach(img => {
-            srcList.push(img.src)
-        })
+        if(imgs.length > 0){
+            [...imgs].forEach(img => {
+                srcList.push(img.src)
+            })
+        }
+   
     }
+    if(srcList.length === 0){
+        srcList.push(imageSrc)
+    }
+   
+
 
     const asyncWrapper = async () => {
         try{
