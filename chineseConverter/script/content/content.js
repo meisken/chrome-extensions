@@ -155,7 +155,7 @@ const convertType = {
       
     },
     [contextMenuIds.imageToText]: ({selectedText, processedResult, imageSrc}, callback) => {
-
+        
         const selection = window.getSelection();
         const srcList = [];
         let result = "";
@@ -173,7 +173,7 @@ const convertType = {
 
         const asyncWrapper = async () => {
             try{
-              
+                showReminder("正在開始識別 可能需要一些時間完成");
                 for(const src of srcList){
                     const text = await imageToText(['chi_tra','eng','chi_sim'], src, true);
                     result += `${text}${srcList.length > 1 ? '\n' : ""}`
@@ -186,7 +186,7 @@ const convertType = {
             
         }
         if(srcList.length > 0){
-            showReminder("正在開始識別 可能需要一些時間完成");
+       
             asyncWrapper();
         }else{
             showReminder("沒有找到任何圖片", "error")
