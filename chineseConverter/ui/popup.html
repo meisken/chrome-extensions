@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
     <link href="./style/main.css" rel="stylesheet">
-    <script src="../script/html2canvas.min.js"></script>
+    <script src="../script/lib/html2canvas.min.js"></script>
+
 </head>
 <body>
     <div  class="app">
@@ -237,36 +238,17 @@
                             </div>
                         </label>
 
-                        <label for="convert-mode-image-text-zh">
+                        <label for="convert-mode-image-text">
                             <div class="setting-row">
                                 <div class="icon">
                                     <img src="images/icons/check.svg" />
                                 </div>
-                                <span class="body-regular-font">繁體 圖轉文字</span>
-                                <input type="checkbox" id="convert-mode-image-text-zh">
+                                <span class="body-regular-font">圖片轉文字</span>
+                                <input type="checkbox" id="convert-mode-image-text">
                             </div>
                         </label>
 
 
-                        <label for="convert-mode-image-text-cn">
-                            <div class="setting-row">
-                                <div class="icon">
-                                    <img src="images/icons/check.svg" />
-                                </div>
-                                <span class="body-regular-font">簡體 圖轉文字</span>
-                                <input type="checkbox" id="convert-mode-image-text-cn">
-                            </div>
-                        </label>
-
-                        <label for="convert-mode-image-text-en">
-                            <div class="setting-row">
-                                <div class="icon">
-                                    <img src="images/icons/check.svg" />
-                                </div>
-                                <span class="body-regular-font">英文 圖轉文字</span>
-                                <input type="checkbox" id="convert-mode-image-text-en">
-                            </div>
-                        </label>
 
                     </section>
 
@@ -323,45 +305,21 @@
                             </div>
                         </label>
 
-
+                        <label for="context-image-text">
+                            <div class="setting-row">
+                                <div class="icon">
+                                    <img src="images/icons/check.svg" />
+                                </div>
+                                <span class="body-regular-font">圖片轉文字</span>
+                                <input type="checkbox" id="context-image-text">
+                            </div>
+                        </label>
 
                     </section>
 
 
 
-                    <div class="section-subheading section-subheading-font">圖片右鍵選單設定</div>
-                    <section class="setting-section context-menu">
-                        <label for="context-image-text-zh">
-                            <div class="setting-row">
-                                <div class="icon">
-                                    <img src="images/icons/check.svg" />
-                                </div>
-                                <span class="body-regular-font">繁體 圖轉文字</span>
-                                <input type="checkbox" id="context-image-text-zh">
-                            </div>
-                        </label>
 
-
-                        <label for="context-image-text-cn">
-                            <div class="setting-row">
-                                <div class="icon">
-                                    <img src="images/icons/check.svg" />
-                                </div>
-                                <span class="body-regular-font">簡體 圖轉文字</span>
-                                <input type="checkbox" id="context-image-text-cn">
-                            </div>
-                        </label>
-
-                        <label for="context-image-text-en">
-                            <div class="setting-row">
-                                <div class="icon">
-                                    <img src="images/icons/check.svg" />
-                                </div>
-                                <span class="body-regular-font">英文 圖轉文字</span>
-                                <input type="checkbox" id="context-image-text-en">
-                            </div>
-                        </label>
-                    </section>
                     
                     <div class="section-subheading section-subheading-font">圖片儲存方式設定</div>
                     <section class="setting-section image-convert-behavior">

@@ -5,9 +5,8 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 
-    imageToTextZh: "image-text-zh",
-    imageToTextCn: "image-text-cn",
-    imageToTextEn: "image-text-en",
+    imageToText: "image-text",
+
 }
 
 const requestStoredSettings = () => {

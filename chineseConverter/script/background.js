@@ -5,9 +5,8 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 
-    imageToTextZh: "image-text-zh",
-    imageToTextCn: "image-text-cn",
-    imageToTextEn: "image-text-en",
+    imageToText: "image-text",
+
 }
 //type ContextType = "all" | "page" | "frame" | "selection" | "link" | "editable" | "image" | "video" | "audio" | "launcher" | "browser_action" | "page_action" | "action"
 const registerMode = {
@@ -17,9 +16,8 @@ const registerMode = {
     [contextMenuIds.zhToQuick]: "selection",
     [contextMenuIds.textToImage]: "selection",
 
-    [contextMenuIds.imageToTextZh]: "image",
-    [contextMenuIds.imageToTextCn]: "image",
-    [contextMenuIds.imageToTextEn]: "image",
+    [contextMenuIds.imageToText]: "image",
+
 }
 
 //may make customizable context menu name
@@ -38,9 +36,8 @@ const settings = {
         [contextMenuIds.zhToQuick]: true,
         [contextMenuIds.textToImage]: true,
 
-        [contextMenuIds.imageToTextZh]: true,
-        [contextMenuIds.imageToTextCn]: true,
-        [contextMenuIds.imageToTextEn]: true,
+        [contextMenuIds.imageToText]: true,
+
 
     },
     contextMenuName: {
@@ -50,9 +47,8 @@ const settings = {
         [contextMenuIds.zhToQuick]: "繁轉速成碼",
         [contextMenuIds.textToImage]: "已選部份截圖",
 
-        [contextMenuIds.imageToTextZh]: "繁體 圖轉文字",
-        [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
-        [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
+        [contextMenuIds.imageToText]: "圖片轉文字",
+
     },
     reminder: {
         enabled: true
@@ -80,15 +76,9 @@ const rightClickActions = {
        //process on content.js
     },   
 
-    [contextMenuIds.imageToTextZh]: (_, selectedText) => {
+    [contextMenuIds.imageToText]: (_, selectedText) => {
         //process on content.js
-    },
-    [contextMenuIds.imageToTextCn]: (_, selectedText) => {
-        //process on content.js
-    },
-    [contextMenuIds.imageToTextEn]: (_, selectedText) => {
-        //process on content.js
-    }       
+    },    
 }
 const requestTypes = {
     "request-stored-settings": (props) => {

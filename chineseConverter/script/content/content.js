@@ -120,7 +120,7 @@ const convertType = {
 
            
                 if(isExist(button) && isExist(statusIndictor) && isExist(outputImage)){
-                    showReminder("開始圖片轉換 (可能需要一點時間完成)");
+                    showReminder("開始圖片轉換 可能需要一點時間完成");
                     const statusIndictorListener = () => {
                         const status = statusIndictor.getAttribute("data-status");
                         const message = statusIndictor.getAttribute("data-message");
@@ -154,22 +154,47 @@ const convertType = {
         }
       
     },
-    [contextMenuIds.imageToTextZh]: ({selectedText, processedResult, imageSrc}, callback) => {
-        imageToText('chi_tra', imageSrc, true).then((text) => {
-            callback(text);
-        }).catch(err => showReminder(err, "error"));
-    },
-    [contextMenuIds.imageToTextCn]: ({selectedText, processedResult, imageSrc}, callback) => {
-        imageToText('chi_sim', imageSrc, true).then((text) => {
-            callback(text);
-        }).catch(err => showReminder(err, "error"));
-    },
-    [contextMenuIds.imageToTextEn]: ({selectedText, processedResult, imageSrc}, callback) => {
-        imageToText('eng', imageSrc, false).then((text) => {
-            callback(text);
-        }).catch(err => showReminder(err, "error"));
+    [contextMenuIds.imageToText]: ({selectedText, processedResult, imageSrc}, callback) => {
 
-    }
+        const selection = window.getSelection();
+        const srcList = [];
+        let result = "";
+
+        if(selection.isCollapsed){
+            srcList.push(imageSrc)
+        }else{
+            const range = document.getSelection().getRangeAt(0);
+            const fragment = range.cloneContents();
+            const imgs = fragment.querySelectorAll('img');
+            [...imgs].forEach(img => {
+                srcList.push(img.src)
+            })
+        }
+
+        const asyncWrapper = async () => {
+            try{
+              
+                for(const src of srcList){
+                    const text = await imageToText(['chi_tra','eng','chi_sim'], src, true);
+                    result += `${text}${srcList.length > 1 ? '\n' : ""}`
+                }
+
+                callback(result);
+            }catch(err){
+                showReminder(err, "error")
+            }
+            
+        }
+        if(srcList.length > 0){
+            showReminder("正在開始識別 可能需要一些時間完成");
+            asyncWrapper();
+        }else{
+            showReminder("沒有找到任何圖片", "error")
+        }
+      
+    
+    },
+
  
 }
 
@@ -267,6 +292,7 @@ const main = () => {
                 imageSrc 
 
             } = request;
+
             if(convertType[mode]){
                 convertType[mode]({selectedText, processedResult, imageSrc}, (result => {
            
@@ -318,6 +344,8 @@ const main = () => {
                     sendResponse(result);
                    
                 }))
+            }else{
+                showReminder(`沒有這個轉換模式`, "error")
             }   
       
                
