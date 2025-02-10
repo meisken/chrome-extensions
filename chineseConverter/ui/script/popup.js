@@ -109,7 +109,6 @@ const clearOutput = () => {
 }
 const outputModes = {
     "text-output-mode": (result) => {
-        console.log(result)
         const outputTarget = document.querySelector(".text-output-mode .output-target");
 
         if(outputTarget !== undefined){
@@ -355,7 +354,6 @@ const imageToText = (language, src, removeSpace) => {
                 workerPath: chrome.runtime.getURL("script/lib/worker.min.js"),
                 langPath: chrome.runtime.getURL("script/lib/lang/"),
                 workerBlobURL: false,
-                logger: (e) => { console.log(e) }
             });
             const { data } = await worker.recognize(src);
             await worker.terminate();
