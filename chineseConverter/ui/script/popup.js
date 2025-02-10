@@ -20,9 +20,8 @@ const contextMenuIds = {
     zhToQuick: "zh-quick",
     textToImage: "text-image",
 
-    imageToTextZh: "image-text-zh",
-    imageToTextCn: "image-text-cn",
-    imageToTextEn: "image-text-en",
+    imageToText: "image-text",
+
 }
 
 const convertModeName = {
@@ -32,9 +31,8 @@ const convertModeName = {
     [contextMenuIds.zhToQuick]: "繁轉速成碼",
     [contextMenuIds.textToImage]: "文字轉圖片",
 
-    [contextMenuIds.imageToTextZh]: "繁體 圖轉文字",
-    [contextMenuIds.imageToTextCn]: "簡體 圖轉文字",
-    [contextMenuIds.imageToTextEn]: "英文 圖轉文字",
+    [contextMenuIds.imageToText]: "圖片轉文字",
+
 }
 const inputModes = {
     [contextMenuIds.zhToCn]: "text",
@@ -44,9 +42,8 @@ const inputModes = {
     [contextMenuIds.textToImage]: "text",
 
 
-    [contextMenuIds.imageToTextZh]: "file",
-    [contextMenuIds.imageToTextCn]: "file",
-    [contextMenuIds.imageToTextEn]: "file",
+    [contextMenuIds.imageToText]: "file",
+
 }
 const outputModeNames = {
     [contextMenuIds.zhToCn]: "text-output-mode",
@@ -56,9 +53,8 @@ const outputModeNames = {
     [contextMenuIds.textToImage]: "image-output-mode",
 
 
-    [contextMenuIds.imageToTextZh]: "text-output-mode",
-    [contextMenuIds.imageToTextCn]: "text-output-mode",
-    [contextMenuIds.imageToTextEn]: "text-output-mode",
+    [contextMenuIds.imageToText]: "text-output-mode",
+
 }
 const printError = (err) => {
     const errorMessageBox = document.querySelector("#error-message-box");
@@ -80,15 +76,23 @@ const clearInput = () => {
     }else{
         printError("textConvertInput does not exist")
     }
+
+    const imageConvertInput = document.querySelector("#image-search-input");
+    const fileInputPlaceholder = document.querySelector(".file-input-mode .placeholder");
+    if(imageConvertInput && fileInputPlaceholder){
+        imageConvertInput.value = "";
+        fileInputPlaceholder.textContent = "";
+    }else{
+        printError("imageConvertInput or fileInputPlaceholder does not exist")
+    }
+
 }
 const clearOutput = () => {
     const textOutputTarget = document.querySelector(".text-output-mode .output-target");
     const quickOutputTarget = document.querySelector(".quick-output-mode.output-target");
+
     if( textOutputTarget !== undefined && textOutputTarget !== null){
         textOutputTarget.textContent = "";
-
-
-  
     }else{
         printError("textOutputTarget does not exist");
     }
@@ -97,7 +101,6 @@ const clearOutput = () => {
     }else{
         printError("quickOutputTarget does not exist");
     }
-
     const imageOutput = document.querySelector("#image-output");
     if(imageOutput !== undefined && imageOutput !== null){
         imageOutput.remove();
@@ -106,7 +109,7 @@ const clearOutput = () => {
 }
 const outputModes = {
     "text-output-mode": (result) => {
-
+        console.log(result)
         const outputTarget = document.querySelector(".text-output-mode .output-target");
 
         if(outputTarget !== undefined){
@@ -337,7 +340,36 @@ const registerCheckboxesListeners = () => {
     checkboxOnChangeListers();
 }
 
+const imageToText = (language, src, removeSpace) => {
+    const removeSpaceAfterWords = (str) => {
+        return str.replace(/(?<=\p{Script=Han})(?=[^\n])\s/gmu,"")
+    } 
+    const removeEmptyLine = (str) => {
+        return str.replace(/(^(\r\n|\n|\r)$)|(^(\r\n|\n|\r))|^\s*$/gm,"")
+    }
+    return new Promise(async (resolve, reject) => {
+        try{
+            const { createWorker } = Tesseract;
+            const worker = await createWorker(language, 1, {
+                corePath: chrome.runtime.getURL("script/lib/tesseract-core-simd-lstm.wasm.js"),
+                workerPath: chrome.runtime.getURL("script/lib/worker.min.js"),
+                langPath: chrome.runtime.getURL("script/lib/lang/"),
+                workerBlobURL: false,
+                logger: (e) => { console.log(e) }
+            });
+            const { data } = await worker.recognize(src);
+            await worker.terminate();
+            resolve(
+                removeEmptyLine(
+                    removeSpace ? removeSpaceAfterWords(data.text) : data.text
+                )
+            );
 
+        }catch(err){
+            reject(err)
+        }
+    })
+}
 
 const convertType = {
     [contextMenuIds.zhToCn]: (mode, text, callback) => {      
@@ -401,6 +433,12 @@ const convertType = {
 
 
     },
+    [contextMenuIds.imageToText]: (mode, url, callback) => {
+        imageToText(['chi_tra','eng','chi_sim'], url, true).then((text) => {
+            callback(text)
+        }).catch(printError)
+    },
+
 }
 
 const registerSearchInputOnChangeListener = () => {
@@ -445,6 +483,45 @@ const registerSearchInputOnChangeListener = () => {
         printError("textConvertInput does not exist");
     }
 
+    const imageConvertInput = document.querySelector("#image-search-input");
+
+    if(imageConvertInput){
+
+        const readURL = file => {
+            return new Promise((res, rej) => {
+                const reader = new FileReader();
+                reader.onload = e => res(e.target.result);
+                reader.onerror = e => rej(e);
+                reader.readAsDataURL(file);
+            });
+        };
+
+
+        imageConvertInput.addEventListener("change", async (e) => {
+       
+            const file = e.target.files[0];
+            const filename = file.name;
+            const url = await readURL(file);
+        
+            const fileInputPlaceholder = document.querySelector(".file-input-mode .placeholder");
+            if(fileInputPlaceholder){
+
+                clearErrorMessage();
+                fileInputPlaceholder.textContent = filename;
+
+                const result = await requestTextProcess(url, storedSettings.convertMode.current);
+                outputModes[outputModeNames[storedSettings.convertMode.current]](result);
+                
+         
+            }else{
+                printError("fileInputPlaceholder does not exist");
+            }
+            // img.src = url;
+            
+        });
+    }else{
+        printError("imageConvertInput does not exist");
+    }
     // storedSettings.convertMode.current
 }
 const registerCopyButtonOnClickListener = () => {
