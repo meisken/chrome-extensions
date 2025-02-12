@@ -78,7 +78,6 @@ const getUserSelection = () => {
     }
 
     const removePadding = (el) => {
-
         if(isElement(el)){
             el.style.paddingLeft = "";
             el.style.paddingRight = "";
@@ -172,7 +171,7 @@ const getUserSelection = () => {
     const willBeCopiedElement = isElement(selectionContainer) ? selectionContainer : selectionContainer.parentNode;
     addPadding(willBeCopiedElement);
     return {    
-        restoreElements: () => { removePadding(selectionContainer); },
+        restoreElements: () => { removePadding(willBeCopiedElement); },
         selectionContainer:  willBeCopiedElement
     }
 
@@ -195,7 +194,6 @@ const findBackgroundColor = (el) => {
  
             return bg
         }else{
-            console.log(el.parentNode.tagName)
             if(el.parentNode.tagName !== "HTML"){
                 return findBackgroundColor(el.parentNode)
             }else{
@@ -258,6 +256,7 @@ createConverterStatusElements(textToImageConverterElementId, ({
             setConverterStatus(textToImageConverterElementId,"done", "");
    
             const onCopied = () => {
+
                 restoreElements();
                 isCopiedIndicator.removeEventListener("click",onCopied)
             }
