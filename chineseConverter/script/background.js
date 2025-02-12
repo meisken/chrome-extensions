@@ -74,9 +74,16 @@ const rightClickActions = {
         //process on content.js
     },
     [contextMenuIds.zhToQuick]: (_, selectedText) => {
+     
+        if(selectedText === undefined || selectedText === ""){
+            return "converter-error-no-selected-text"
+        }
         return zhConvertToQuick(selectedText);
     },
     [contextMenuIds.quickToZh]: (_,selectedText) => {
+        if(selectedText === undefined || selectedText === ""){
+            return "converter-error-no-selected-text"
+        }
         return quickConvertToZh(selectedText);
     },
     [contextMenuIds.textToImage]: (_, selectedText) => {
