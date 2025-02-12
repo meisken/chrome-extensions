@@ -35,6 +35,15 @@ const injectMain = async () => {
             await injectCode(chrome.runtime.getURL('script/lib/html2canvas.min.js'), "head");
             await injectCode(chrome.runtime.getURL('script/content/textToImage.js'), "body");
         }
+        if(settings !== undefined && (
+            settings.contextMenu[contextMenuIds.imageToTextZh] ||
+            settings.contextMenu[contextMenuIds.imageToTextCn] ||
+            settings.contextMenu[contextMenuIds.imageToTextEn]
+        ) ){
+            await injectCode(chrome.runtime.getURL("script/lib/tesseract.min.js"), "head");
+            await injectCode(chrome.runtime.getURL('script/content/imageToText.js'), "body");
+        }
+
     }catch(err){
         console.error(err)
     }

@@ -1,9 +1,14 @@
-
-
+const textToImageConverterElementId = "text-image-converter";
+const imageToTextConverterElementId = "image-text-converter";
 
 
 const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
+    requestStoredSettings().then((settings) => {
+        if(settings?.reminder?.enabled){
+            showReminder(`已複製到剪貼簿 (你可以設定關閉這提醒)`)
+        }
+    })
 }
 async function saveImage(imgUrl,download,copyToClipboard) {
     try {
@@ -22,11 +27,14 @@ async function saveImage(imgUrl,download,copyToClipboard) {
             imageData = urlCreator.createObjectURL(blob);
     
             const link = document.createElement('a');
-            link.href = imageData
+            link.href = imageData;
             link.download = 'snapshot';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+
+
         }
 
 
@@ -41,78 +49,51 @@ const isString = (variable) => {
 const isExist = (element) => {
     return element !== null && element !== undefined
 }
-const imageToText = (language, src, removeSpace) => {
-    const removeSpaceAfterWords = (str) => {
-        return str.replace(/(?<=\p{Script=Han})(?=[^\n])\s/gmu,"")
-    } 
-    const removeEmptyLine = (str) => {
-        return str.replace(/(^(\r\n|\n|\r)$)|(^(\r\n|\n|\r))|^\s*$/gm,"")
-    }
-    return new Promise(async (resolve, reject) => {
-        try{
-            if(src !== undefined){
-                const { createWorker } = Tesseract;
-                const worker = await createWorker(language);
-                const { data } = await worker.recognize(src);
-                await worker.terminate();
-                resolve(
-                    removeEmptyLine(
-                        removeSpace ? removeSpaceAfterWords(data.text) : data.text
-                    )
-                );
-            }else{
-                reject(`image src does not exist ${src}`)
-            }
 
-
-        }catch(err){
-            reject(err)
-        }
-    })
-}
 const imageToTextHandler = ({selectedText, processedResult, imageSrc, language}, callback) => {
-    const selection = window.getSelection();
-    const srcList = [];
-    let result = "";
-    if(!selection.isCollapsed){
-        const range = document.getSelection().getRangeAt(0);
-        const fragment = range.cloneContents();
-        const imgs = fragment.querySelectorAll('img');
-        if(imgs.length > 0){
-            [...imgs].forEach(img => {
-                srcList.push(img.src)
-            })
-        }
-   
-    }
-    if(srcList.length === 0){
-        srcList.push(imageSrc)
-    }
-   
 
 
-    const asyncWrapper = async () => {
-        try{
-            showReminder("正在開始識別 可能需要一些時間完成");
-            for(const src of srcList){
-                console.log(src)
-                const text = await imageToText(language, src, true);
-                result += `${text}${srcList.length > 1 ? '\n' : ""}`
+    const button = document.querySelector(`#${imageToTextConverterElementId}-convert-button`);
+    const statusIndictor = document.querySelector(`#${imageToTextConverterElementId}-status-indicator`);
+    const textOutput = document.querySelector(`#${imageToTextConverterElementId}-text-output`);
+
+    if(isExist(button) && isExist(statusIndictor) && isExist(textOutput)){
+        showReminder("正在開始識別 可能需要一些時間完成");
+        const statusIndictorListener = () => {
+            const status = statusIndictor.getAttribute("data-status");
+            const message = statusIndictor.getAttribute("data-message");
+            if(status === "done"){
+                const text = textOutput.textContent;
+                // const imageSrc = outputImage.src;
+                callback(text);
+            }else if(status === "error"){
+                showReminder(message, "error");
+            }else{
+                showReminder("unknown status", "error");
             }
-
-            callback(result);
-        }catch(err){
-            showReminder(err, "error")
-        }
         
-    }
-    if(srcList.length > 0){
-   
-        asyncWrapper();
-    }else{
-        showReminder("沒有找到任何圖片", "error")
-    }
+            statusIndictor.removeEventListener("click", statusIndictorListener);
+        }
+        statusIndictor.addEventListener("click", statusIndictorListener);
+        
+        const dataAttributePropNames = {
+            "imageSrc": "data-image-src",
+            "language": "data-language",
+        }
+        statusIndictor.setAttribute(dataAttributePropNames.imageSrc, imageSrc);
+        statusIndictor.setAttribute(dataAttributePropNames.language, language);
+
+        setTimeout(() => {
+    
+            button.click();
+        }, 1)
   
+    
+        return
+    }else{
+        showReminder("刷新網頁(F5)後才能重新啟用圖片轉文字", "error");
+    }
+
 }
 const convertType = {
     [contextMenuIds.zhToCn]: ({selectedText, processedResult}, callback) => {
@@ -138,10 +119,19 @@ const convertType = {
 
     },
     [contextMenuIds.quickToZh]: ({selectedText, processedResult}, callback) => {
+        if(processedResult === "converter-error-no-selected-text"){
+            showReminder("沒有所選文字", "error");
+            return 
+        }
         callback(processedResult)
       
     },
     [contextMenuIds.zhToQuick]: ({selectedText, processedResult}, callback) => {
+        if(processedResult === "converter-error-no-selected-text"){
+            showReminder("沒有所選文字", "error");
+            return 
+        }
+        
         const characterArray = processedResult;
      
         if(characterArray.length > 0){
@@ -164,50 +154,41 @@ const convertType = {
          
     },
     [contextMenuIds.textToImage]: ({selectedText, processedResult}, callback) => {
-        if(true){
-            // const testingElement = document.querySelector("#Panes");
-            try{
-          
 
 
-                const button = document.querySelector("#converter-convert-button");
-                const statusIndictor = document.querySelector("#converter-status-indicator");
-                const outputImage = document.querySelector("#converter-image-output");
+        const button = document.querySelector(`#${textToImageConverterElementId}-convert-button`);
+        const statusIndictor = document.querySelector(`#${textToImageConverterElementId}-status-indicator`);
+        const outputImage = document.querySelector(`#${textToImageConverterElementId}-image-output`);
 
-           
-                if(isExist(button) && isExist(statusIndictor) && isExist(outputImage)){
-                    showReminder("開始圖片轉換 可能需要一點時間完成");
-                    const statusIndictorListener = () => {
-                        const status = statusIndictor.getAttribute("data-status");
-                        const message = statusIndictor.getAttribute("data-message");
-                        if(status === "done"){
-                            const imageSrc = outputImage.src;
-                            callback(imageSrc);
-                        }else if(status === "error"){
-                            showReminder(message, "error");
-                        }else{
-                            showReminder("unknown status", "error");
-                        }
-                    
-                        statusIndictor.removeEventListener("click", statusIndictorListener);
-                    }
-                    statusIndictor.addEventListener("click", statusIndictorListener);
-                    
-                    setTimeout(() => {
-                        button.click();
-                    }, 1)
-              
-                
-                    return
+   
+        if(isExist(button) && isExist(statusIndictor) && isExist(outputImage)){
+            showReminder("開始圖片轉換 可能需要一些時間完成");
+            const statusIndictorListener = () => {
+                const status = statusIndictor.getAttribute("data-status");
+                const message = statusIndictor.getAttribute("data-message");
+                if(status === "done"){
+                    const imageSrc = outputImage.src;
+                    callback(imageSrc);
+                }else if(status === "error"){
+                    showReminder(message, "error");
                 }else{
-                    showReminder("刷新網頁(F5)後才能重新啟用文字轉圖片", "error");
+                    showReminder("unknown status", "error");
                 }
-
-            }catch(err){
-                showReminder(err, "error");
+            
+                statusIndictor.removeEventListener("click", statusIndictorListener);
             }
-    
+            statusIndictor.addEventListener("click", statusIndictorListener);
+            
+            setTimeout(() => {
+                button.click();
+            }, 1)
+      
+        
+            return
+        }else{
+            showReminder("刷新網頁(F5)後才能重新啟用文字轉圖片", "error");
         }
+
       
     },
     [contextMenuIds.imageToTextZh]: ({selectedText, processedResult, imageSrc}, callback) => {
@@ -309,7 +290,69 @@ const hideReminder = () => {
     }
 
 }
+const clickIsCopiedIndicator = (id) => {
+    const isCopiedIndicator = document.querySelector(`#${id}-is-copied-indicator`);
 
+    if(isExist(isCopiedIndicator)){
+        isCopiedIndicator.click();
+ 
+    }else{
+        showReminder(`isCopiedIndicator does not exist`)
+    }
+}
+const outputMode = {
+    [contextMenuIds.zhToCn]: (result) => {
+        copyToClipboard(result);
+    },
+    [contextMenuIds.cnToZh]: (result) => {
+        copyToClipboard(result);
+    },
+    [contextMenuIds.quickToZh]: (result) => {
+        copyToClipboard(result);
+    },
+    [contextMenuIds.zhToQuick]: (result) => {
+        copyToClipboard(result);
+    },
+    [contextMenuIds.textToImage]: (result) => {
+        const imageUrl = result;
+        requestStoredSettings().then((settings) => {
+          
+            const download = settings.imageConvertBehavior["download"];
+            const copy = settings.imageConvertBehavior["copy-to-clipboard"];
+            
+            saveImage(imageUrl,download,copy);
+            
+
+            clickIsCopiedIndicator(textToImageConverterElementId)
+
+
+            if(settings?.reminder?.enabled){
+                const copyMessage = copy ? "已複製到剪貼簿" : "";
+                const slash = copy && download ? "/" : "";
+                const downloadMessage = download ? "已下載到電腦" : "";
+                showReminder(`${copyMessage}${slash}${downloadMessage} (你可以設定關閉這提醒)`)
+            }
+            if(!copy && !download){
+                showReminder(`沒有已選取的圖片轉換模式`, "error")
+
+            }
+
+        })
+    },
+
+    [contextMenuIds.imageToTextZh]: (result) => {
+        copyToClipboard(result);
+        clickIsCopiedIndicator(imageToTextConverterElementId)
+    },
+    [contextMenuIds.imageToTextCn]: (result) => {
+        copyToClipboard(result);
+        clickIsCopiedIndicator(imageToTextConverterElementId)
+    },
+    [contextMenuIds.imageToTextEn]: (result) => {
+        copyToClipboard(result);
+        clickIsCopiedIndicator(imageToTextConverterElementId)
+    },
+}
 const main = () => {
 
     chrome.runtime.onMessage.addListener( 
@@ -327,55 +370,14 @@ const main = () => {
                 convertType[mode]({selectedText, processedResult, imageSrc}, (result => {
            
                     if(result){
-                    
-                   
-                        if(mode === contextMenuIds.textToImage){
-                            const imageUrl = result;
-                            requestStoredSettings().then((settings) => {
-                              
-                                const download = settings.imageConvertBehavior["download"];
-                                const copy = settings.imageConvertBehavior["copy-to-clipboard"];
-                                
-                                saveImage(imageUrl,download,copy);
-                                
-                                const isCopiedIndicator = document.querySelector("#converter-is-copied-indicator");
-    
-                                if(isExist(isCopiedIndicator)){
-                                    isCopiedIndicator.click();
-                                }else{
-                                    showReminder(`isCopiedIndicator does not exist`)
-                                }
-
-                                if(settings?.reminder?.enabled){
-                                    const copyMessage = copy ? "已複製到剪貼簿" : "";
-                                    const slash = copy && download ? "/" : "";
-                                    const downloadMessage = download ? "已下載到電腦" : "";
-                                    showReminder(`${copyMessage}${slash}${downloadMessage} (你可以設定關閉這提醒)`)
-                                }
-                                if(!copy && !download){
-                                    showReminder(`沒有已選取的圖片轉換模式`, "error")
-
-                                }
-
-                            })
-             
-                            // restoreToOrigin();
-                        }else{
-                            copyToClipboard(result);
-                            requestStoredSettings().then((settings) => {
-                                if(settings?.reminder?.enabled){
-                                    showReminder(`已複製到剪貼簿 (你可以設定關閉這提醒)`)
-                                }
-                            })
-                        }
-                        
-              
+                        outputMode[mode](result)
                     }
                     sendResponse(result);
                    
                 }))
             }else{
-                showReminder(`沒有這個轉換模式`, "error")
+                showReminder(`沒有這個轉換模式`, "error");
+                sendResponse(result);
             }   
       
                

@@ -29,7 +29,7 @@
     },
     "web_accessible_resources": [
         {
-          "resources": [ "script/lib/html2canvas.min.js", "script/content/textToImage.js", "script/lib/tesseract-core-simd-lstm.wasm.js", "script/lib/worker.min.js", "script/lib/lang/*.traineddata"  ],
+          "resources": [ "script/lib/html2canvas.min.js", "script/content/textToImage.js", "script/lib/tesseract.min.js", "script/lib/tesseract-core-simd-lstm.wasm.js", "script/lib/worker.min.js", "script/lib/lang/*.traineddata", "script/content/createElement.js", "script/content/imageToText.js"  ],
           "matches": [ "https://*/*", "http://*/*" ]
         }
     ],
