@@ -47,7 +47,7 @@ const getUserSelection = () => {
         if(isElement(el)){
     
             const { paddingTop, paddingBottom, paddingLeft, paddingRight } = window.getComputedStyle(el);
-    
+
             const toNumber = (padding) => {
                 const paddingNumber = parseInt(padding.replace("px",""));
                 if(paddingNumber !== NaN){
@@ -78,6 +78,7 @@ const getUserSelection = () => {
     }
 
     const removePadding = (el) => {
+
         if(isElement(el)){
             el.style.paddingLeft = "";
             el.style.paddingRight = "";
@@ -188,13 +189,19 @@ const findBackgroundColor = (el) => {
             return [...string.matchAll(/([0-9]\.?[0-9]*)/gm)]
         }
         const bg = window.getComputedStyle(el).backgroundColor;
-        
+
         const rgba = extractRgbaValue(bg);
         if(bg !==  "" && bg !== undefined && (rgba.length === 3  || (rgba[3] !== undefined && rgba[3][0] !== "0")) ){
  
             return bg
         }else{
-            return findBackgroundColor(el.parentNode)
+            console.log(el.parentNode.tagName)
+            if(el.parentNode.tagName !== "HTML"){
+                return findBackgroundColor(el.parentNode)
+            }else{
+                return "#ffffff"
+            }
+       
         }
 
     }
