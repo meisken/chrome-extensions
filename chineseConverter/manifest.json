@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "文字轉換工具",
     "description": "提供繁簡轉換/圖片轉文字/已選擇部份截圖/速成碼轉換的功能,可在跳出視窗/右鍵選單中使用",
-    "version": "4",
+    "version": "4.1",
     "permissions": [
         "activeTab",
         "contextMenus",
@@ -29,8 +29,8 @@
     },
     "web_accessible_resources": [
         {
-          "resources": [ "script/lib/html2canvas.min.js", "script/content/textToImage.js", "script/lib/tesseract.min.js", "script/lib/tesseract-core-simd-lstm.wasm.js", "script/lib/worker.min.js", "script/lib/lang/*.traineddata", "script/content/createElement.js", "script/content/imageToText.js"  ],
-          "matches": [ "https://*/*", "http://*/*" ]
+          "resources": [ "script/lib/html2canvas.min.js", "script/content/textToImage.js", "script/lib/tesseract.min.js", "script/lib/tesseract-core-simd-lstm.wasm.js", "script/lib/worker.min.js", "script/content/createElement.js", "script/content/imageToText.js"  ],
+          "matches": [ "https://*/*" ]
         }
     ],
     "content_security_policy": {

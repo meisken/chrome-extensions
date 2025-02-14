@@ -361,11 +361,13 @@ const imageToText = (language, src, removeSpace) => {
             const worker = await createWorker(language, 1, {
                 corePath: chrome.runtime.getURL("script/lib/tesseract-core-simd-lstm.wasm.js"),
                 workerPath: chrome.runtime.getURL("script/lib/worker.min.js"),
-                langPath: chrome.runtime.getURL("script/lib/lang/"),
+                // langPath: chrome.runtime.getURL("script/lib/lang/"),
                 workerBlobURL: false,
             });
             if(src !== undefined){
+
                 const { data } = await worker.recognize(src);
+                console.log("working")
                 await worker.terminate();
                 resolve(
                     removeEmptyLine(
