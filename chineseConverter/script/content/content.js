@@ -215,12 +215,13 @@ const reminderId = "converter-reminder";
 const reminderTImeout = 3000;
 
 
-
+const reminderStatusAttributeName = "data-status"
 const inertReminder = () => {
     const reminder = document.createElement("div");
  
     reminder.id = reminderId;
     reminder.classList.add(`${reminderId}-hidden`);
+    reminder.setAttribute(reminderStatusAttributeName, "hidden")
 
     const container = document.createElement("div");
     container.classList.add(`${reminderId}-container`);
@@ -250,18 +251,34 @@ const inertReminder = () => {
 }
 
 let hideTimerTimeout;
+let reminderTimeout;
 const showReminder = (text, mode) => {
     const reminder = document.querySelector(`#${reminderId}`);
     const timer = document.querySelector(`#${reminderId} .${reminderId}-timer`);
     const textOutput =  document.querySelector(`#${reminderId} .${reminderId}-text-output`);
-
+ 
     if(reminder && timer && textOutput){
+  
+        const currentStatus = reminder.getAttribute(reminderStatusAttributeName);
+        if(currentStatus === "hidden"){
+            reminder.setAttribute(reminderStatusAttributeName, "displaying");
+            timer.classList.add(`${reminderId}-animation`);
+            
+   
+        }else{
 
-        clearTimeout(hideTimerTimeout);
-        if(timer.classList.contains(`${reminderId}-animation`)){
-            timer.classList.remove(`${reminderId}-animation`);
-            void timer.offsetWidth;
+            clearTimeout(reminderTimeout);
+            const newTimer = timer.cloneNode(true);
+            reminder.replaceChild(newTimer, timer);
         }
+
+        reminderTimeout = setTimeout(() => {
+            reminder.classList.add(`${reminderId}-hidden`);
+            reminder.setAttribute(reminderStatusAttributeName, "hidden");
+            timer.classList.remove(`${reminderId}-animation`);
+        }, reminderTImeout)
+
+        textOutput.textContent = text;
 
         if(mode === "error"){
             textOutput.classList.add(`${reminderId}-error`)
@@ -269,17 +286,8 @@ const showReminder = (text, mode) => {
             textOutput.classList.remove(`${reminderId}-error`)
         }
 
-
-        reminder.classList.remove(`${reminderId}-hidden`);
-        timer.classList.add(`${reminderId}-animation`);
-        textOutput.textContent = text;
- 
-
-        hideTimerTimeout = setTimeout(() => {
-            reminder.classList.add(`${reminderId}-hidden`);
-        }, reminderTImeout)
     }else{
-        showReminder("reminder does not exist", "error")
+        console.error("reminder does not exist")
     }
 }
 const hideReminder = () => {
