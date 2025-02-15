@@ -111,7 +111,6 @@ createConverterStatusElements(imageToTextConverterElementId, ({
         setConverterStatus(imageToTextConverterElementId,"done", "");
 
         const onCopied = () => {
-            console.log(statusIndicator, outputText)
             statusIndicator.setAttribute(dataAttributePropNames.imageSrc, "");
             statusIndicator.setAttribute(dataAttributePropNames.language, "");
             outputText.textContent = "";
