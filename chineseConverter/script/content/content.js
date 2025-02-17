@@ -216,7 +216,7 @@ const reminderTImeout = 3000;
 
 
 const reminderStatusAttributeName = "data-status"
-const inertReminder = () => {
+const insertReminder = () => {
     const reminder = document.createElement("div");
  
     reminder.id = reminderId;
@@ -243,6 +243,8 @@ const inertReminder = () => {
 
     const timer = document.createElement("div");
     timer.classList.add(`${reminderId}-timer`);
+
+
     reminder.appendChild(timer);
     document.body.appendChild(reminder);
 
@@ -250,8 +252,21 @@ const inertReminder = () => {
 
 }
 
-let hideTimerTimeout;
 let reminderTimeout;
+
+const hideReminder = () => {
+    const reminder = document.querySelector(`#${reminderId}`);
+    const timer = document.querySelector(`#${reminderId} .${reminderId}-timer`);
+
+    if(reminder){
+        reminder.classList.add(`${reminderId}-hidden`);
+        reminder.setAttribute(reminderStatusAttributeName, "hidden");
+        timer.classList.remove(`${reminderId}-animation`);
+        timer.removeEventListener(hideReminder)
+    }
+
+}
+
 const showReminder = (text, mode) => {
     const reminder = document.querySelector(`#${reminderId}`);
     const timer = document.querySelector(`#${reminderId} .${reminderId}-timer`);
@@ -263,20 +278,16 @@ const showReminder = (text, mode) => {
         if(currentStatus === "hidden"){
             reminder.setAttribute(reminderStatusAttributeName, "displaying");
             timer.classList.add(`${reminderId}-animation`);
-            
-   
+            timer.addEventListener("animationend", hideReminder ,true)
         }else{
 
             clearTimeout(reminderTimeout);
             const newTimer = timer.cloneNode(true);
+            newTimer.addEventListener("animationend", hideReminder ,true)
             reminder.replaceChild(newTimer, timer);
+            
         }
-
-        reminderTimeout = setTimeout(() => {
-            reminder.classList.add(`${reminderId}-hidden`);
-            reminder.setAttribute(reminderStatusAttributeName, "hidden");
-            timer.classList.remove(`${reminderId}-animation`);
-        }, reminderTImeout)
+        
 
         textOutput.textContent = text;
 
@@ -290,14 +301,7 @@ const showReminder = (text, mode) => {
         console.error("reminder does not exist")
     }
 }
-const hideReminder = () => {
-    const reminder = document.querySelector(`#${reminderId}`);
-    if(reminder){
-        clearTimeout(hideTimerTimeout);
-        reminder.classList.add(`${reminderId}-hidden`);
-    }
 
-}
 const clickIsCopiedIndicator = (id) => {
     const isCopiedIndicator = document.querySelector(`#${id}-is-copied-indicator`);
 
@@ -393,7 +397,7 @@ const main = () => {
    );
 
 
-   inertReminder();
+   insertReminder();
 
     window.addEventListener("contextmenu", () => {
         backgroundConsoleLog("wake up")
