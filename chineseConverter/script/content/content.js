@@ -262,7 +262,7 @@ const hideReminder = () => {
         reminder.classList.add(`${reminderId}-hidden`);
         reminder.setAttribute(reminderStatusAttributeName, "hidden");
         timer.classList.remove(`${reminderId}-animation`);
-        timer.removeEventListener(hideReminder)
+        timer.removeEventListener("animationend",hideReminder)
     }
 
 }
